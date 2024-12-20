@@ -1,0 +1,44 @@
+{
+  "name": "formify-backend",
+  "version": "1.0.0",
+  "description": "RESTAPI for Formify",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "build": "ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joehsn/formify.git"
+  },
+  "keywords": [
+    "form",
+    "survey",
+    "quiz"
+  ],
+  "author": "joehsn <joehsn@outlook.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joehsn/formify/issues"
+  },
+  "homepage": "https://github.com/joehsn/formify#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/express-session": "^1.18.1",
+    "@types/node": "^22.10.2",
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.1"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}
