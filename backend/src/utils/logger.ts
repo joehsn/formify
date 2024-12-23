@@ -1,7 +1,7 @@
 import winston from "winston";
 
 const logger = winston.createLogger({
-  level: "info",
+  level: process.env.NODE_ENV !== "production" ? "debug" : "error",
   //format: winston.format.json(),
   format: winston.format.combine(
     winston.format.colorize(),
@@ -17,8 +17,12 @@ const logger = winston.createLogger({
   ],
 });
 
-export const logToConsole = new winston.transports.Console({
-  format: winston.format.simple(),
-});
+if (process.env.NODE_ENV !== "production") {
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    }),
+  );
+}
 
 export default logger;
