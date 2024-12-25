@@ -1,4 +1,4 @@
-import { genSalt, hash } from "bcrypt";
+import { genSalt, hash } from 'bcrypt';
 
 /**
  * Hashes a passed string
@@ -10,4 +10,3 @@ export async function hashPass(password: string) {
   const hashed = await hash(password, salt);
   return hashed;
 }
-

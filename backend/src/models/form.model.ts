@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const formSchema = new mongoose.Schema({
   id: {
@@ -15,11 +15,11 @@ const formSchema = new mongoose.Schema({
     type: String,
     required: false,
     trim: true,
-    default: "",
+    default: '',
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: 'User',
     required: true,
   },
   fields: [
@@ -31,13 +31,13 @@ const formSchema = new mongoose.Schema({
       type: {
         type: String,
         enum: [
-          "text",
-          "email",
-          "number",
-          "radio",
-          "checkbox",
-          "dropdown",
-          "date",
+          'text',
+          'email',
+          'number',
+          'radio',
+          'checkbox',
+          'dropdown',
+          'date',
         ],
         required: true,
       },
@@ -65,8 +65,8 @@ const formSchema = new mongoose.Schema({
   ],
   status: {
     type: String,
-    enum: ["draft", "published", "closed"],
-    default: "draft",
+    enum: ['draft', 'published', 'closed'],
+    default: 'draft',
   },
   createdAt: {
     type: Date,
@@ -78,6 +78,6 @@ const formSchema = new mongoose.Schema({
   },
 });
 
-const Form = mongoose.model("forms", formSchema);
+const Form = mongoose.model('forms', formSchema);
 
 export default Form;

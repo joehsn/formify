@@ -1,5 +1,5 @@
-import "express";
-import mongoose from "mongoose";
+import 'express';
+import mongoose from 'mongoose';
 
 declare global {
   namespace Express {
@@ -9,4 +9,3 @@ declare global {
     }
   }
 }
-

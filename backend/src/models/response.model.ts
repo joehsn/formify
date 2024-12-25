@@ -9,7 +9,7 @@ const responseSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: true
+      required: true,
     },
     answers: [
       {
@@ -24,9 +24,8 @@ const responseSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 const Response = mongoose.model('Response', responseSchema);
 export default Response;
-
