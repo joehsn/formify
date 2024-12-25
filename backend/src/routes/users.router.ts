@@ -4,16 +4,17 @@ import passport from "passport";
 
 const router = express.Router();
 
+router.get("/", UserController.getUser);
+
+// TODO:
+// router.put("/", UserController.updateUser);
+
+// TODO:
+// router.delete("/", UserController.deleteUser);
+
 router.post("/register", UserController.register);
 
-router.post(
-  "/login",
-  passport.authenticate("local", {
-    successMessage: "User logged in successfull",
-    failureMessage: "Error occured while loggin in",
-  }),
-  UserController.login,
-);
+router.post("/login", passport.authenticate("local"), UserController.login);
 
 router.post("/logout", UserController.logout);
 

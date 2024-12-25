@@ -1,0 +1,14 @@
+# Build files
+/dist/
+/build/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Specific to TypeScript projects
+.tscache/
+*.tsbuildinfo
+# Ignore artifacts:
+node_modules/
+/coverage/

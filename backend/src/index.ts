@@ -1,10 +1,12 @@
 import dotenv from "dotenv";
-import express, { NextFunction, Response, Request } from "express";
+import express from "express";
 import logger from "./utils/logger";
 import userRouter from "./routes/users.router";
+import formRouter from "./routes/forms.router";
+import responseRouter from "./routes/responses.router";
 import morgan from "morgan";
 import session from "express-session";
-import envSchema from "./lib/schemas/env";
+import envSchema from "./lib/schemas/env.schema";
 import mongoose from "mongoose";
 import passport from "passport";
 import {
@@ -13,6 +15,7 @@ import {
   userDeserialisation,
 } from "./lib/passport";
 import MongoStore from "connect-mongo";
+import errorHandler from "./middlewares/error.middleware";
 
 dotenv.config();
 
@@ -31,7 +34,7 @@ app.use(
   }),
 );
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(
   session({
     secret: envVars.SESSION_SECRET,
@@ -49,6 +52,8 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use("/user", userRouter);
+app.use("/form", formRouter);
+app.use("/response", responseRouter);
 // TODO: implement CORS functionality
 // app.use(cors({}))
 
@@ -61,27 +66,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// no-unused-vars disable
-app.use(
-  (
-    err: {
-      status: number;
-      message: string;
-      stack: unknown;
-    },
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) => {
-    const statusCode = err.status || 500;
-    logger.error(`${statusCode} - ${err.message}`);
-    res.status(statusCode).json({
-      success: false,
-      message: err.message || "Internal Server Error",
-      stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
-    });
-  },
-);
+app.use(errorHandler);
 
 app.listen(envVars.PORT, () =>
   console.log(

@@ -1,9 +1,6 @@
 import { z } from "zod";
 
-const userRegisterSchema = z.object({
-  fullname: z.string({
-    required_error: "Full Name is required",
-  }),
+const loginSchema = z.object({
   email: z
     .string({
       required_error: "Email is required",
@@ -14,4 +11,6 @@ const userRegisterSchema = z.object({
   }).min(6, "Password should be at least 6 characters long"),
 });
 
-export default userRegisterSchema;
+export type LoginType = z.infer<typeof loginSchema>;
+
+export default loginSchema;

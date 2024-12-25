@@ -1,4 +1,4 @@
-import mongoose, { InferSchemaType } from "mongoose";
+import mongoose, { InferSchemaType } from 'mongoose';
 
 const userSchema = new mongoose.Schema({
   fullname: { type: String, required: true, trim: true },
@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: [6, "Password should be at least 6 characters long"],
+    minlength: [6, 'Password should be at least 6 characters long'],
     select: false,
   },
   joinedAt: {
@@ -19,13 +19,13 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.pre("save", function (next) {
+userSchema.pre('save', function (next) {
   this.updatedAt = new Date();
   next();
 });
 
-const User = mongoose.model("users", userSchema);
+const User = mongoose.model('users', userSchema);
 
-export type IUser = InferSchemaType<typeof userSchema>
+export type IUser = InferSchemaType<typeof userSchema>;
 
 export default User;
