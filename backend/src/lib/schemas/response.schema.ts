@@ -4,15 +4,21 @@ const fieldSchema = z.object({
   fieldId: z.string().nonempty({ message: 'fieldId is required.' }), // Ensures fieldId is not empty
   value: z
     .union([z.string(), z.number(), z.boolean(), z.date(), z.array(z.string())])
-    .optional(), // Allows multiple types for flexibility in answers
+    .optional(),
 });
 
 export const responseSchema = z.object({
+  responseId: z
+    .string({
+      required_error: 'responseId is required',
+    })
+    .uuid('responseId must be a valid UUID.')
+    .optional(),
   formId: z
     .string({
       required_error: 'formId is required',
     })
-    .uuid({ message: 'formId must be a valid UUID.' }), // Validates UUID format
+    .uuid({ message: 'formId must be a valid UUID.' }),
   email: z
     .string({
       required_error: 'Email is required',
@@ -20,7 +26,7 @@ export const responseSchema = z.object({
     .email('Must be a valid email.'),
   answers: z
     .array(fieldSchema)
-    .nonempty({ message: 'answers must contain at least one field.' }), // Ensures at least one answer is provided
+    .nonempty({ message: 'answers must contain at least one field.' }),
 });
 
 export type ResponseType = z.infer<typeof responseSchema>;

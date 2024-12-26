@@ -2,6 +2,11 @@ import mongoose from 'mongoose';
 
 const responseSchema = new mongoose.Schema(
   {
+    responseId: {
+      type: mongoose.Schema.Types.UUID,
+      unique: true,
+      required: true,
+    },
     formId: {
       type: mongoose.Schema.Types.UUID,
       ref: 'Form',

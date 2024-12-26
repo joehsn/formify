@@ -60,9 +60,6 @@ app.use('/response', responseRouter);
 app.get('/', (req, res) => {
   res.status(200).json({
     Message: 'Formify is running',
-    isAuthenticated: req.isAuthenticated() ? 'Yes' : 'No',
-    user: req.user,
-    Session: req.session,
   });
 });
 

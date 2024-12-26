@@ -14,12 +14,12 @@ import { validate } from 'uuid';
  * If the form with the specified ID does not exist, it returns a 404 status with a relevant message.
  * If an error occurs during the process, a 500 status code is thrown with an error message.
  *
- * @param {Request} req - The Express request object, containing the form ID in the URL params and the response data in the body.
- * @param {Response} res - The Express response object used to send the response back to the client.
+ * @param req - The Express request object, containing the form ID in the URL params and the response data in the body.
+ * @param res - The Express response object used to send the response back to the client.
  *
- * @returns {void} - Responds with a JSON object containing a success message and the newly created response.
+ * @returns - Responds with a JSON object containing a success message and the newly created response.
  *
- * @throws {HttpError} - Throws an HTTP error if an issue occurs during the process, such as invalid data or database errors.
+ * @throws - Throws an HTTP error if an issue occurs during the process, such as invalid data or database errors.
  */
 export const createResponse = async (req: Request, res: Response) => {
   try {
@@ -59,12 +59,12 @@ export const createResponse = async (req: Request, res: Response) => {
  * If the form ID is invalid, it returns a 400 status with an error message.
  * In case of an error while fetching the responses, a 500 status code is thrown with an error message.
  *
- * @param {Request} req - The Express request object, containing the form ID in the URL params.
- * @param {Response} res - The Express response object used to send the list of responses back to the client.
+ * @param req - The Express request object, containing the form ID in the URL params.
+ * @param res - The Express response object used to send the list of responses back to the client.
  *
- * @returns {void} - Responds with a JSON array containing all the responses associated with the form.
+ * @returns - Responds with a JSON array containing all the responses associated with the form.
  *
- * @throws {HttpError} - Throws an HTTP error if an issue occurs during the process, such as invalid form ID or database errors.
+ * @throws - Throws an HTTP error if an issue occurs during the process, such as invalid form ID or database errors.
  */
 export const getResponsesByForm = async (req: Request, res: Response) => {
   try {
@@ -81,5 +81,48 @@ export const getResponsesByForm = async (req: Request, res: Response) => {
   } catch (error) {
     logger.error(error);
     throw createHttpError(500, 'An error occurred while retrieving responses.');
+  }
+};
+
+/**
+ * @function getResponseById
+ * @description Retrieves a specific response by its ID.
+ * This function accepts the form ID and response ID from
+ * the request parameters, validates them, and then fetches the response from the database.
+ *
+ * If the response is not found, it returns a 404 status with a relevant message.
+ * If an error occurs during the process, a 500 status code is thrown with an error message.
+ *
+ * @param req - The Express request object, containing the form ID and response ID in the URL params.
+ * @param res - The Express response object used to send the response back to the client.
+ * @returns - Responds with a JSON object containing the response data.
+ * @throws - Throws an HTTP error if an issue occurs during the process, such as invalid IDs or database errors.
+ */
+export const getResponseById = async (req: Request, res: Response) => {
+  try {
+    const { formId, responseId } = req.params;
+
+    if (!validate(formId) || !validate(responseId)) {
+      res.status(400).json({ message: 'Invalid formId or responseId.' });
+      return;
+    }
+
+    const response = await ResponseModel.findOne({
+      formId,
+      responseId,
+    }).lean();
+
+    if (!response) {
+      res.status(404).json({ message: 'Response not found.' });
+      return;
+    }
+
+    res.status(200).json(response);
+  } catch (error) {
+    logger.error(error);
+    throw createHttpError(
+      500,
+      'An error occurred while retrieving the response.'
+    );
   }
 };

@@ -1,5 +1,7 @@
 # TODO
 
+### Backend
+
 - [x] intsall and use winston.
 - [] Configure CORS in the application.
 - [] Setup and configure redis
@@ -8,3 +10,7 @@
 - [] Configure PassportJS properly to respond in cases of _User does not exists_ or _Invalid credinatials (Password mismatched)_.
 - [] Implement User update and delete functionalities.
 - [] Implement Response update and delete functionalities.
+- [] Write tests for the api.
+- [] update the form schema to have a `formId` instead of `id` field.
+
+### Frontend

@@ -7,4 +7,6 @@ router.post('/:formId', ResponsesController.createResponse);
 
 router.get('/:formId', ResponsesController.getResponsesByForm);
 
+router.get('/:formId/:responseId', ResponsesController.getResponseById);
+
 export default router;
