@@ -17,6 +17,11 @@ const envSchema = z.object({
       required_error: 'MONGO_URI environment variable is missing',
     })
     .url('MONGO_URI is not a valid URI'),
+  CLIENT_URL: z
+    .string({
+      required_error: 'CLIENT_URL environment variable is missing',
+    })
+    .url('CLIENT_URL is not a valid URI'),
 });
 
 export type ENVType = z.infer<typeof envSchema>;

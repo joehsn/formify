@@ -43,7 +43,7 @@ export const strategy = new LocalStrategy.Strategy(
       const isMatched = await bcrypt.compare(password, user.password);
 
       if (!isMatched) {
-        return done(null, false, { message: 'Invalid credinatials' });
+        return done(null, false, { message: 'Invalid credentials' });
       }
 
       return done(null, {

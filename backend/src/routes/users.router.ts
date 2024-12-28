@@ -1,6 +1,6 @@
 import express from 'express';
 import * as UserController from '../controllers/users.controller';
-import passport from 'passport';
+import { authenticate } from '../utils';
 
 const router = express.Router();
 
@@ -14,7 +14,7 @@ router.get('/', UserController.getUser);
 
 router.post('/register', UserController.register);
 
-router.post('/login', passport.authenticate('local'), UserController.login);
+router.post('/login', authenticate, UserController.login);
 
 router.post('/logout', UserController.logout);
 
