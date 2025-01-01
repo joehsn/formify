@@ -16,7 +16,7 @@ export default function Logo({ className }: Props) {
       )}
     >
       <FaFileLines size={32} className="inline-block mr-2" />
-      <span>Formify</span>
+      <span className="hidden sm:inline">Formify</span>
     </Link>
   );
 }

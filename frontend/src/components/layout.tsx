@@ -5,9 +5,7 @@ export default function Layout() {
   return (
     <div aria-label="layout">
       <Navbar />
-      <main>
-        <Outlet />
-      </main>
+      <Outlet />
     </div>
   );
 }

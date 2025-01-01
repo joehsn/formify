@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const envSchema = z.object({
+const envSchema = z.object({
   VITE_API_URL: z
     .string({
       required_error: 'API_URL is required',
@@ -8,3 +8,5 @@ export const envSchema = z.object({
     .url('Invalid URL')
     .default('http://localhost:5000'),
 });
+
+export default envSchema;

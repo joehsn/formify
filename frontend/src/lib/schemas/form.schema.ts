@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 const fieldSchema = z.object({
+  fieldId: z.string().uuid(),
   label: z.string().trim().nonempty('Label is required'),
   type: z.enum([
     'text',
@@ -11,7 +12,7 @@ const fieldSchema = z.object({
     'dropdown',
     'date',
   ]),
-  options: z.array(z.string()).optional(),
+  options: z.string().array().optional(),
   required: z.boolean().default(false),
   validations: z
     .object({
@@ -23,7 +24,6 @@ const fieldSchema = z.object({
 });
 
 const formSchema = z.object({
-  id: z.string().uuid(),
   title: z.string().nonempty('Title is required').trim(),
   description: z.string().trim().optional(),
   fields: fieldSchema.array().nonempty('At least one field is present'),
@@ -31,5 +31,6 @@ const formSchema = z.object({
 });
 
 export type FormType = z.infer<typeof formSchema>;
+export type FieldType = z.infer<typeof fieldSchema>;
 
 export default formSchema;

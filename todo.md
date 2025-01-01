@@ -4,6 +4,8 @@
 ### Features
 
 - [] Implement pagination for foms and responses.
+- [] Implement auto save for forms.
+- [] Maintain a local copy of the form in the browser and save it to the server every 5 minutes or user save it explicitly.
 
 ### Backend
 
@@ -34,4 +36,5 @@
 
 ### Frontend
 - [] Implement toggle password visibility in the login and register forms.
+- [] Implement a Loader component.
 
