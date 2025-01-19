@@ -19,14 +19,12 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { envVars } from '@/lib/utils';
-import axios from 'axios';
 import useUserStore from '@/lib/stores/user.store';
-import { toast } from '@/hooks/use-toast';
+import { handleLogIn } from '@/lib/handlers';
 
 export default function Login() {
   const navigate = useNavigate();
-  const setUser = useUserStore((state) => state.setUser);
+  const onLogin = useUserStore((state) => state.onLogin);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   const form = useForm<LoginType>({
     defaultValues: {
@@ -37,49 +35,22 @@ export default function Login() {
   });
   const onSubmit = async (data: LoginType) => {
     try {
-      const response = await axios.post(
-        `${envVars.VITE_API_URL}/user/login`,
-        JSON.stringify(data),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          withCredentials: true,
-        }
-      );
-      setUser(response.data);
-      toast({
-        title: 'Logged in',
-        description: 'You have been logged in successfully',
-        duration: 5000,
+      await handleLogIn(data, (user) => {
+        onLogin(user);
+        navigate('/');
       });
-      navigate('/');
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        toast({
-          title: error.response?.statusText || 'Error',
-          description: error.response?.data?.message || 'An error occurred',
-          duration: 5000,
-          variant: 'destructive',
-        });
-      } else {
-        toast({
-          title: 'Error',
-          description: 'An error occurred while logging in',
-          duration: 5000,
-          variant: 'destructive',
-        });
-      }
+      console.error(error);
     }
   };
 
   return (
     <div className="py-24">
-      <div className="container flex items-center justify-center flex-col h-[calc(100vh-12rem)]">
+      <div className="container flex h-[calc(100vh-12rem)] flex-col items-center justify-center">
         {isAuthenticated ? (
           <>
-            <Logo className="block w-full text-center mb-8 text-4xl" />
-            <Card className="w-[350px] mx-auto">
+            <Logo className="mb-8 block w-full text-center text-4xl" />
+            <Card className="mx-auto w-[350px]">
               <CardHeader>
                 <h1 className="text-2xl font-semibold">
                   You are already logged in
@@ -90,7 +61,7 @@ export default function Login() {
                   You are already logged in. Logout to login to another account.
                 </p>
               </CardContent>
-              <CardFooter className="flex-col gap-y-4 items-start">
+              <CardFooter className="flex-col items-start gap-y-4">
                 <Button className="w-full">
                   <Link to="/logout">Logout</Link>
                 </Button>
@@ -99,8 +70,8 @@ export default function Login() {
           </>
         ) : (
           <>
-            <Logo className="block w-full text-center mb-8 text-4xl" />
-            <Card className="w-[350px] mx-auto">
+            <Logo className="mb-8 block w-full text-center text-4xl" />
+            <Card className="mx-auto w-[350px]">
               <CardHeader>
                 <h1 className="text-2xl font-semibold">
                   Login to your account
@@ -125,7 +96,12 @@ export default function Login() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input placeholder="Ex. john@doe.com" {...field} />
+                            <Input
+                              placeholder="Ex. john@doe.com"
+                              type="email"
+                              autoComplete="email"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -141,6 +117,7 @@ export default function Login() {
                             <Input
                               placeholder="********"
                               type="password"
+                              autoComplete="current-password"
                               {...field}
                             />
                           </FormControl>
@@ -149,7 +126,7 @@ export default function Login() {
                       )}
                     />
                   </CardContent>
-                  <CardFooter className="flex-col gap-y-4 items-start">
+                  <CardFooter className="flex-col items-start gap-y-4">
                     <Button className="w-full">
                       <Link to="/login">Login</Link>
                     </Button>

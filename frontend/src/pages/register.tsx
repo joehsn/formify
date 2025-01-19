@@ -19,11 +19,12 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { envVars, logout } from '@/lib/utils';
+import { envVars } from '@/lib/utils';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import useUserStore from '@/lib/stores/user.store';
+import { handleLogOut } from '@/lib/handlers';
 
 export default function Register() {
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
@@ -41,7 +42,7 @@ export default function Register() {
   const onSubmit = async (data: RegisterType) => {
     try {
       const response = await axios.post(
-        `${envVars.VITE_API_URL}/user/register`,
+        `${envVars.VITE_API_URL}/users/register`,
         {
           fullname: data.name,
           email: data.email,
@@ -76,11 +77,11 @@ export default function Register() {
 
   return (
     <div className="py-24">
-      <div className="container flex items-center justify-center flex-col h-[calc(100vh-12rem)]">
+      <div className="container flex h-[calc(100vh-12rem)] flex-col items-center justify-center">
         {isAuthenticated ? (
           <>
-            <Logo className="block w-full text-center mb-8 text-4xl" />
-            <Card className="w-[350px] mx-auto">
+            <Logo className="mb-8 block w-full text-center text-4xl" />
+            <Card className="mx-auto w-[350px]">
               <CardHeader>
                 <h1 className="text-2xl font-semibold">You are logged in</h1>
               </CardHeader>
@@ -89,8 +90,8 @@ export default function Register() {
                   You are already logged in. Do you want to logout?
                 </p>
                 <Button
-                  onClick={() => logout(onLogout)}
-                  className="w-full mt-4"
+                  onClick={() => handleLogOut(onLogout)}
+                  className="mt-4 w-full"
                 >
                   Logout
                 </Button>
@@ -99,8 +100,8 @@ export default function Register() {
           </>
         ) : (
           <>
-            <Logo className="block w-full text-center mb-8 text-4xl" />
-            <Card className="w-[350px] mx-auto">
+            <Logo className="mb-8 block w-full text-center text-4xl" />
+            <Card className="mx-auto w-[350px]">
               <CardHeader>
                 <h1 className="text-2xl font-semibold">
                   Register for an account
@@ -128,6 +129,7 @@ export default function Register() {
                             <Input
                               placeholder="Ex. John Doe"
                               type="text"
+                              autoComplete="name"
                               {...field}
                             />
                           </FormControl>
@@ -142,7 +144,12 @@ export default function Register() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input placeholder="Ex. john@doe.com" {...field} />
+                            <Input
+                              placeholder="Ex. john@doe.com"
+                              type="email"
+                              autoComplete="email"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -158,6 +165,7 @@ export default function Register() {
                             <Input
                               placeholder="********"
                               type="password"
+                              autoComplete="new-password"
                               {...field}
                             />
                           </FormControl>
@@ -170,11 +178,12 @@ export default function Register() {
                       name="confirmPassword"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Password</FormLabel>
+                          <FormLabel>Confirm password</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="********"
                               type="password"
+                              autoComplete="new-password"
                               {...field}
                             />
                           </FormControl>
@@ -183,7 +192,7 @@ export default function Register() {
                       )}
                     />
                   </CardContent>
-                  <CardFooter className="flex-col gap-y-4 items-start">
+                  <CardFooter className="flex-col items-start gap-y-4">
                     <Button type="submit" className="w-full">
                       Register
                     </Button>

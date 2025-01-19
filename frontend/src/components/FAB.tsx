@@ -5,16 +5,16 @@ import { v4 as uuidv4 } from 'uuid';
 
 function FAB() {
   const navigate = useNavigate();
-  const uuid = uuidv4();
 
   const handleClick = () => {
-    navigate(`/form/${uuid}`);
+    navigate('/create/' + uuidv4());
   };
   return (
     <Button
       onClick={handleClick}
       variant="default"
-      className="fixed bottom-8 right-4 md:right-8 shadow-simple rounded-full p-4"
+      size="lg"
+      className="fixed bottom-8 right-4 p-4 shadow-simple md:right-8"
     >
       <FaPlus size={24} />
       <span className="ml-2 hidden sm:inline">New Form</span>

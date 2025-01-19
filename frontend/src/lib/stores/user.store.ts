@@ -7,15 +7,25 @@ export interface State {
 }
 
 export interface Actions {
-  setUser: (user: State['user']) => void;
+  onLogin: (user: State['user']) => void;
   onLogout: () => void;
+  isNotAuthenticated: () => void;
 }
 
 const useUserStore = create<State & Actions>((set) => ({
   user: null,
   isAuthenticated: false,
-  setUser: (user) => set({ user, isAuthenticated: !!user }),
+  onLogin: (user) => set({ user, isAuthenticated: !!user }),
   onLogout: () => set({ user: null, isAuthenticated: false }),
+  isNotAuthenticated: () => set({ isAuthenticated: false }),
 }));
+
+useUserStore.subscribe((state) => {
+  if (state.isAuthenticated) {
+    localStorage.setItem('user', JSON.stringify(state.user));
+  } else {
+    localStorage.removeItem('user');
+  }
+});
 
 export default useUserStore;

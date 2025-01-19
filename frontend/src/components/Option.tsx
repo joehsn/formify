@@ -1,15 +1,22 @@
+import { FaTrash } from 'react-icons/fa6';
+import { Button } from './ui/button';
+
 type OptionProps = {
   option: string;
   index: number;
   fieldType: 'radio' | 'checkbox' | 'dropdown';
+  optionsLength: number;
   onOptionChange: (newOption: string) => void;
+  onOptionDelete: () => void;
 };
 
 function Option({
   option,
   index,
   fieldType,
+  optionsLength,
   onOptionChange,
+  onOptionDelete,
 }: OptionProps) {
   return (
     <div className="flex w-full items-center space-x-2">
@@ -25,7 +32,15 @@ function Option({
         value={option}
         onChange={(e) => onOptionChange(e.target.value)}
         className="w-full border-b py-1 outline-none focus:border-neutral-900"
+        placeholder={`Option ${index + 1}`}
       />
+      <Button
+        aria-label="Delete option"
+        onClick={() => onOptionDelete()}
+        disabled={optionsLength <= 2}
+      >
+        <FaTrash className="h-4 w-4" />
+      </Button>
     </div>
   );
 }

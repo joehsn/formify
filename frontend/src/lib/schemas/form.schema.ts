@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-const fieldSchema = z.object({
-  fieldId: z.string().uuid(),
+export const fieldSchema = z.object({
+  _id: z.string(),
   label: z.string().trim().nonempty('Label is required'),
   type: z.enum([
     'text',
@@ -29,8 +29,5 @@ const formSchema = z.object({
   fields: fieldSchema.array().nonempty('At least one field is present'),
   status: z.enum(['draft', 'published', 'closed']).default('draft'), // Enum for status
 });
-
-export type FormType = z.infer<typeof formSchema>;
-export type FieldType = z.infer<typeof fieldSchema>;
 
 export default formSchema;
