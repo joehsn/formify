@@ -48,6 +48,7 @@ export const strategy = new LocalStrategy.Strategy(
 
       return done(null, {
         id: user._id,
+        fullname: user.fullname,
         email: user.email,
       });
     } catch (error) {
@@ -100,6 +101,7 @@ export const userDeserialisation = async (
       const fetchedUser = await User.findById(userId.id)
         .select({
           _id: true,
+          fullname: true,
           email: true,
         })
         .lean()
@@ -108,6 +110,7 @@ export const userDeserialisation = async (
       const user: Express.User | null = fetchedUser
         ? {
             id: fetchedUser._id,
+            fullname: fetchedUser.fullname,
             email: fetchedUser.email,
           }
         : null;

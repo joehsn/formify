@@ -1,10 +1,9 @@
 import { Request, Response } from 'express';
-import createHttpError from 'http-errors';
 import ResponseModel from '../models/response.model';
 import Form from '../models/form.model';
 import responseSchema from '../lib/schemas/response.schema';
 import logger from '../utils/logger';
-import { validate } from 'uuid';
+import { validate as isUUID, v4 as uuid } from 'uuid';
 
 /**
  * @function createResponse
@@ -25,8 +24,8 @@ export const createResponse = async (req: Request, res: Response) => {
   try {
     const { formId } = req.params;
     const response = responseSchema.parse({
-      ...req.body,
       formId,
+      ...req.body,
     });
 
     const form = await Form.findOne({ id: formId });
@@ -36,7 +35,10 @@ export const createResponse = async (req: Request, res: Response) => {
       return;
     }
 
-    const newResponse = new ResponseModel(response);
+    const newResponse = new ResponseModel({
+      responseId: uuid(),
+      ...response,
+    });
 
     await newResponse.save();
     res.status(201).json({
@@ -45,10 +47,9 @@ export const createResponse = async (req: Request, res: Response) => {
     });
   } catch (error) {
     logger.error(error);
-    throw createHttpError(
-      500,
-      'An error occurred while creating the response.'
-    );
+    res.status(500).json({
+      message: 'An error occurred while creating the response.',
+    });
   }
 };
 
@@ -70,17 +71,22 @@ export const getResponsesByForm = async (req: Request, res: Response) => {
   try {
     const { formId } = req.params;
 
-    if (!validate(formId)) {
+    if (!isUUID(formId)) {
       res.status(400).json({ message: 'Invalid formId.' });
       return;
     }
 
-    const responses = await ResponseModel.find({ formId }).lean();
+    const responses = await ResponseModel.find({ formId })
+      .select('-answers')
+      .lean()
+      .exec();
 
     res.status(200).json(responses);
   } catch (error) {
     logger.error(error);
-    throw createHttpError(500, 'An error occurred while retrieving responses.');
+    res.status(500).json({
+      message: 'An error occurred while retrieving the responses.',
+    });
   }
 };
 
@@ -102,7 +108,7 @@ export const getResponseById = async (req: Request, res: Response) => {
   try {
     const { formId, responseId } = req.params;
 
-    if (!validate(formId) || !validate(responseId)) {
+    if (!isUUID(formId) || !isUUID(responseId)) {
       res.status(400).json({ message: 'Invalid formId or responseId.' });
       return;
     }
@@ -120,9 +126,8 @@ export const getResponseById = async (req: Request, res: Response) => {
     res.status(200).json(response);
   } catch (error) {
     logger.error(error);
-    throw createHttpError(
-      500,
-      'An error occurred while retrieving the response.'
-    );
+    res
+      .status(500)
+      .json({ message: 'An error occurred while retrieving the response.' });
   }
 };

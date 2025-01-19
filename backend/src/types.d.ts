@@ -5,6 +5,7 @@ declare global {
   namespace Express {
     interface User {
       id: mongoose.Types.ObjectId;
+      fullname: string;
       email: string;
     }
   }

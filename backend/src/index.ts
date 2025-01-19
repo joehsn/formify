@@ -24,9 +24,9 @@ const envVars = envSchema.parse(process.env);
 
 setupMiddlewares(app, envVars);
 
-app.use('/user', userRouter);
-app.use('/form', formRouter);
-app.use('/response', responseRouter);
+app.use('/users', userRouter);
+app.use('/forms', formRouter);
+app.use('/responses', responseRouter);
 
 app.get('/', (_req, res) => {
   res.status(200).json({

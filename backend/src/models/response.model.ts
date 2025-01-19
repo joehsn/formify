@@ -16,18 +16,11 @@ const responseSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    answers: [
-      {
-        fieldId: {
-          type: String,
-          required: true,
-        },
-        value: {
-          type: mongoose.Schema.Types.Mixed, // Supports various data types
-          required: true,
-        },
-      },
-    ],
+    answers: {
+      type: Map,
+      of: mongoose.Schema.Types.Mixed,
+      required: true,
+    },
   },
   { timestamps: true }
 );

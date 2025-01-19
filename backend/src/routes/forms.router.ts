@@ -4,16 +4,16 @@ import isAuthenticated from '../middlewares/auth.middleware';
 
 const router = Router();
 
+router.get('/:formId', FormsController.getForm);
+
 router.use(isAuthenticated);
 
 router.post('/', FormsController.createForm);
 
-router.get('/', FormsController.getAllForms);
+router.get('/', FormsController.getAllFormsByUser);
 
-router.get('/:id', FormsController.getForm);
+router.put('/:formId', FormsController.updateForm);
 
-router.put('/:id', FormsController.updateForm);
-
-router.delete('/:id', FormsController.deleteForm);
+router.delete('/:formId', FormsController.deleteForm);
 
 export default router;
