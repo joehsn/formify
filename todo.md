@@ -33,9 +33,9 @@
 - [] Implement Response update and delete functionalities.
 - [] Write tests for the api.
 - [] Update the form schema to have a `formId` instead of `id` field.
-- [] Update the README.md file to include the new changes.
-- [] Update the password length in the User schema to be a minimum of 8 characters.
-- [] Add Rate Limiting to the application.
+- [x] Update the README.md file to include the new changes.
+- [x] Update the password length in the User schema to be a minimum of 8 characters.
+- [x] Add Rate Limiting to the application.
 
   ```javascript
   import rateLimit from "express-rate-limit";
@@ -52,10 +52,10 @@
 ### Frontend
 
 - [] Implement toggle password visibility in the login and register forms.
-- [] Implement a Loader component.
+- [x] Implement a Loader component.
 - [x] Implement Date picker field component
 - [x] Implement Drop-down field component
 - [] Auto focus on new fields and options
-- [] Correct the state of user logged in or not in the application.
-- [] Update docment's title on every route change and based on form's title.
+- [x] Correct the state of user logged in or not in the application.
+- [x] Update docment's title on every route change and based on form's title.
 - [] Add copy functionality to the app.
