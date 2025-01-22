@@ -19,12 +19,9 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { envVars } from '@/lib/utils';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { toast } from '@/hooks/use-toast';
 import useUserStore from '@/lib/stores/user.store';
-import { handleLogOut } from '@/lib/handlers';
+import { handleLogOut, handleRegister } from '@/lib/handlers';
 
 export default function Register() {
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
@@ -41,42 +38,14 @@ export default function Register() {
   });
   const onSubmit = async (data: RegisterType) => {
     try {
-      const response = await axios.post(
-        `${envVars.VITE_API_URL}/users/register`,
-        {
-          fullname: data.name,
-          email: data.email,
-          password: data.password,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          withCredentials: true,
-        }
-      );
-      if (response.status === 200) {
-        toast({
-          title: 'Account created',
-          description: 'Your account has been created successfully',
-          duration: 5000,
-        });
-        navigate('/login');
-      } else {
-        toast({
-          title: 'Error',
-          description: 'An error occurred while creating your account',
-          duration: 5000,
-          variant: 'destructive',
-        });
-      }
+      await handleRegister(data, () => navigate('/login'));
     } catch (error) {
       console.error(error);
     }
   };
 
   return (
-    <div className="py-24 h-full">
+    <div className="h-full py-24">
       <div className="container flex flex-col items-center justify-center">
         {isAuthenticated ? (
           <>

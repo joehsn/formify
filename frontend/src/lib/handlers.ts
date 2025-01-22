@@ -4,6 +4,52 @@ import { FormType, User } from '@/types';
 import { envVars } from './utils';
 import { z } from 'zod';
 import { LoginType } from './schemas/login.schema';
+import { RegisterType } from './schemas/register.schema';
+
+export const handleRegister = async (
+  data: RegisterType,
+  onRegister: () => void
+) => {
+  try {
+    const response = await axios.post(
+      `${envVars.VITE_API_URL}/users/register`,
+      {
+        fullname: data.name,
+        email: data.email,
+        password: data.password,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      }
+    );
+    toast({
+      title: 'Account created',
+      description: response.data.message,
+      duration: 5000,
+    });
+    onRegister();
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      toast({
+        title: error.response?.statusText || 'Error',
+        description: error.response?.data?.message || 'An error occurred',
+        duration: 5000,
+        variant: 'destructive',
+      });
+    } else {
+      console.error(error);
+      toast({
+        title: 'Error',
+        description: 'An error occurred while creating your account',
+        duration: 5000,
+        variant: 'destructive',
+      });
+    }
+  }
+};
 
 /**
  * A utility function to login the user.
