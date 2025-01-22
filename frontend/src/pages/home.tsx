@@ -27,9 +27,9 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="container">
+    <>
       {isAuthenticated ? <AuthenticatedView /> : <UnauthenticatedView />}
-    </div>
+    </>
   );
 }
 
@@ -53,7 +53,7 @@ function AuthenticatedView() {
   if (error) return <Error />;
   return (
     <>
-      <div className="py-24">
+      <div className="py-24 container">
         <h1 className="pb-16 text-center text-4xl font-semibold">
           Welcome back, {user?.fullname}
         </h1>
