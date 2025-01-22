@@ -2,7 +2,6 @@ import { Response, Request } from 'express';
 import { ZodError } from 'zod';
 import { fromZodError } from 'zod-validation-error';
 import logger from '../utils/logger';
-import createHttpError from 'http-errors';
 import { hashPass } from '../utils';
 import User from '../models/user.model';
 import registerSchema from '../lib/schemas/register.schema';
@@ -34,10 +33,9 @@ export async function getUser(req: Request, res: Response) {
     }
   } catch (error) {
     logger.error('An error occured while fetching user data: ' + error);
-    throw createHttpError(
-      500,
-      'An error occured while fetching user data: ' + error
-    );
+    res.status(500).json({
+      message: 'An error occured while fetching user data',
+    });
   }
 }
 
@@ -82,13 +80,14 @@ export async function register(req: Request, res: Response) {
         'An error occurred while parsing user registeration data',
         fromError
       );
-      throw createHttpError(500, fromError);
+      res.status(400).json({
+        message: 'An error occurred while parsing user registeration data',
+      });
     }
     logger.error('An error occurred while registering a new user: ' + error);
-    throw createHttpError(
-      500,
-      'An error occured while registering a new user: ' + error
-    );
+    res.status(500).json({
+      message: 'An error occurred while registering a new user',
+    });
   }
 }
 

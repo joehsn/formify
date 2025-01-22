@@ -54,10 +54,10 @@ Follow these steps to get the backend up and running on your local machine.
 This backend is designed with scalability and modularity in mind. Key configuration and functionalities include:
 
 - **Database connection**: MongoDB and Mongoose are used for data storage and querying.
-- **Authentication**: JWT-based authentication for user login and secure API access.
+- **Authentication**: username-based authentication for user login and secure API access.
 - **API validation**: Express middleware for validating requests and ensuring proper data format.
 
-## Running the Application
+## Running the Application in Development Mode
 
 Once you've installed the necessary dependencies and configured your environment variables:
 
@@ -80,26 +80,26 @@ The backend exposes several API endpoints for interacting with the application.
 
 ### User Routes
 
-- **GET** `/user`: Retrieve the logged in user.
-- **POST** `/user/register`: Registers a new user.
-- **POST** `/user/login`: Logs in an existing user.
-- **POST** `/user/logout`: Logs out the current user.
+- **GET** `/users`: Retrieve the logged in user.
+- **POST** `/users/register`: Registers a new user.
+- **POST** `/users/login`: Logs in an existing user.
+- **POST** `/users/logout`: Logs out the current user.
 
 ### Form routes
 
-- **GET** `/form`: Retrieves all forms.
-- **POST** `/form`: Creates a new form.
-- **GET** `/form/:id`: Retrieves a specific form by ID.
-- **PUT** `/form/:id`: Updates a specific form by ID.
-- **DELETE** `/form/:id`: Deletes a specific form by ID.
+- **GET** `/forms`: Retrieves all forms.
+- **POST** `/forms`: Creates a new form.
+- **GET** `/forms/:id`: Retrieves a specific form by ID.
+- **PUT** `/forms/:id`: Updates a specific form by ID.
+- **DELETE** `/forms/:id`: Deletes a specific form by ID.
 
 ### Response Routes
 
-- **GET** `/response/:formId`: Retrieves all responses.
-- **POST** `/response/:formId`: Creates a new response.
-- **GET** `/response/:formId/:responseId`: Retrieves a specific response by ID.
+- **GET** `/responses/:formId`: Retrieves all responses.
+- **POST** `/responses/:formId`: Creates a new response.
+- **GET** `/responses/:formId/:responseId`: Retrieves a specific response by ID.
 
-Each endpoint is protected by JWT authentication (except the `register` and `login` routes).
+Each endpoint is protected by username authentication (except the `register` and `login` routes).
 
 ### Example Request
 
@@ -139,11 +139,11 @@ The following collections are defined in the MongoDB database:
 ### Forms
 
 - `_id` (ObjectId): Unique identifier for the form.
-- `id` (UUID): Unique ID of the form.
+- `id` (UUID): Unique ID of the form (It's used in the URL).
 - `userId` (String): ID of the user who created the form.
 - `title` (String): Title of the form.
 - `description` (String): Description of the form.
-- `questions` (Array): Array of questions in the form.
+- `fields` (Array): Array of fields in the form.
 - `status` (String): Status of the form (e.g., "draft", "published").
 
 ### Responses
@@ -151,14 +151,18 @@ The following collections are defined in the MongoDB database:
 - `_id` (ObjectId): Unique identifier for the response.
 - `formId` (String): ID of the form the response is associated with.
 - `email` (String): Email of the user who submitted the response.
-- `answers` (Array): Array of answers submitted by the user.
+- `answers` (Object): A key-value pairs of answers submitted by the user.
 
-## Testing
+## Building and Deploying
 
-The backend includes unit and integration tests. To run the tests:
+To build the backend for production, run:
 
 ```bash
-npm test
+npm run build
 ```
 
-Tests are written using [Jest](https://jestjs.io/) or [Vitest](https://vitest.dev/) and can be found in the `tests` folder.
+This will compile the TypeScript files into JavaScript and output them in the `dist` folder. You can then deploy the `dist` folder to your server or cloud platform.
+
+## Contact
+
+For questions or suggestions, reach out at [joehsn@outlook.com](mailto:joehsn@outloo.com).
