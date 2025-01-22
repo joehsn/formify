@@ -26,6 +26,7 @@ export interface FieldType {
 
 export interface FormType {
   _id?: string;
+  id?: string;
   title: string;
   description?: string;
   fields: FieldType[];

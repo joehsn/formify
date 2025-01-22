@@ -17,7 +17,10 @@ const useUserStore = create<State & Actions>((set) => ({
   isAuthenticated: false,
   onLogin: (user) => set({ user, isAuthenticated: !!user }),
   onLogout: () => set({ user: null, isAuthenticated: false }),
-  isNotAuthenticated: () => set({ isAuthenticated: false }),
+  isNotAuthenticated: () => {
+    window.localStorage.removeItem('user');
+    set({ isAuthenticated: false });
+  },
 }));
 
 useUserStore.subscribe((state) => {

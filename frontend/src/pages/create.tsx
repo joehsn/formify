@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Card, CardFooter, CardHeader } from '@/components/ui/card';
 import useCreateFormStore from '@/lib/stores/create.store';
 import { Button } from '@/components/ui/button';
-import { FaFloppyDisk, FaPlus } from 'react-icons/fa6';
+import { Save as SaveIcon, Plus as PlusIcon } from 'lucide-react';
 import CreateFields from '@/components/CreateFields';
 import {
   Select,
@@ -24,7 +24,9 @@ function Create() {
   const lastFieldRef = useRef<HTMLDivElement>(null);
   const form = useCreateFormStore((state) => state.form);
   const setFormTitle = useCreateFormStore((state) => state.setFormTitle);
-  const setFormDescription = useCreateFormStore((state) => state.setFormDescription);
+  const setFormDescription = useCreateFormStore(
+    (state) => state.setFormDescription
+  );
   const addFormField = useCreateFormStore((state) => state.addFormField);
   const setFormStatus = useCreateFormStore((state) => state.setFormStatus);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
@@ -72,10 +74,10 @@ function Create() {
             aria-label="Save form"
             className="w-full"
             onClick={() => {
-               handleSaveForm(formId, form as FormType);
+              handleSaveForm(formId, form as FormType);
             }}
           >
-            <FaFloppyDisk size={32} />
+            <SaveIcon size={32} />
             <span>Save Form</span>
           </Button>
           <Select
@@ -112,7 +114,7 @@ function Create() {
           );
         }}
       >
-        <FaPlus size={32} />
+        <PlusIcon size={32} />
         <span>New Field</span>
       </Button>
     </div>

@@ -46,11 +46,11 @@ export default function Login() {
 
   return (
     <div className="py-24">
-      <div className="container flex h-[calc(100vh-12rem)] flex-col items-center justify-center">
+      <div className="container flex flex-col items-center justify-center">
         {isAuthenticated ? (
           <>
             <Logo className="mb-8 block w-full text-center text-4xl" />
-            <Card className="mx-auto w-[350px]">
+            <Card className="mx-auto w-full max-w-[350px]">
               <CardHeader>
                 <h1 className="text-2xl font-semibold">
                   You are already logged in
@@ -71,7 +71,7 @@ export default function Login() {
         ) : (
           <>
             <Logo className="mb-8 block w-full text-center text-4xl" />
-            <Card className="mx-auto w-[350px]">
+            <Card className="mx-auto w-full max-w-[350px]">
               <CardHeader>
                 <h1 className="text-2xl font-semibold">
                   Login to your account

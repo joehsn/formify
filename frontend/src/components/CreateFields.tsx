@@ -19,7 +19,10 @@ import { Switch } from './ui/switch';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
-import { FaPlus, FaTrash } from 'react-icons/fa6';
+import {
+  Plus as PlusIcon,
+  Trash as TrashIcon,
+} from "lucide-react"
 import Option from './Option';
 
 const types = [
@@ -128,7 +131,7 @@ const CreateFields = forwardRef<HTMLDivElement>((_, ref) => {
                     variant="outline"
                     onClick={() => addFieldOption(field._id)}
                   >
-                    <FaPlus size={32} />
+                    <PlusIcon size={32} />
                     New Option
                   </Button>
                 </>
@@ -158,7 +161,7 @@ const CreateFields = forwardRef<HTMLDivElement>((_, ref) => {
                   removeField(field._id);
                 }}
               >
-                <FaTrash size={24} />
+                <TrashIcon size={24} />
                 <span className="sr-only">Delete</span>
               </Button>
             </div>

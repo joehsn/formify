@@ -5,35 +5,38 @@ import Logo from './logo';
 import { handleLogOut } from '@/lib/handlers';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { cn } from '@/lib/utils';
-import { FaEye } from 'react-icons/fa6';
+import { Eye as EyeIcon } from 'lucide-react';
+import Avatar from './Avatar';
+import { useMediaQuery } from '@uidotdev/usehooks';
+import { useState } from 'react';
 
 function Navbar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const onLogout = useUserStore((state) => state.onLogout);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   const navigate = useNavigate();
   const updateMatch = useMatch('/update/:formId');
+  const isMdScreen = useMediaQuery('only screen and (min-width: 768px)');
   return (
-    <nav className="bg-neutral-100 py-4 text-neutral-700">
+    <nav className="bg-neutral-100 py-4 text-neutral-700 print:hidden">
       <div className="container flex items-center justify-between">
         <div>
           <Logo />
         </div>
         {isAuthenticated ? (
-          <div>
-            { updateMatch ? (
+          <div className="flex items-center gap-x-4">
+            {updateMatch ? (
               <Button
-                onClick={() =>
-                  navigate('/display/' + updateMatch.params.formId)
-                }
-                variant="ghost"
+                onClick={() => navigate('/form/' + updateMatch.params.formId)}
+                variant="outline"
               >
-                <FaEye size={18} />
-                <span className="sr-only">Preview</span>
+                <EyeIcon size={18} />
+                <span className="hidden sm:inline">Preview</span>
               </Button>
             ) : null}
-            <Popover>
+            <Popover open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <PopoverTrigger asChild>
-                <Button variant="ghost" className={cn('p-0 h-full')}>
+                <Button variant="ghost" className={cn('h-full p-0')}>
                   <Avatar />
                 </Button>
               </PopoverTrigger>
@@ -43,6 +46,7 @@ function Navbar() {
                     <Link
                       key={idx}
                       to={`/${item}`}
+                      onClick={() => setIsMenuOpen(false)}
                       className="rounded-md p-2 text-neutral-800 hover:bg-neutral-200"
                     >
                       {item}
@@ -61,29 +65,25 @@ function Navbar() {
             </Popover>
           </div>
         ) : (
-          <div className="flex gap-x-4">
-            <Button asChild variant="outline">
-              <Link to="/register">Register</Link>
-            </Button>
-            <Button asChild>
-              <Link to="/login">Login</Link>
-            </Button>
-          </div>
+          <>
+            {isMdScreen ? (
+              <div className="flex gap-x-4">
+                <Button asChild variant="outline">
+                  <Link to="/register">Register</Link>
+                </Button>
+                <Button asChild>
+                  <Link to="/login">Login</Link>
+                </Button>
+              </div>
+            ) : (
+              <Button asChild>
+                <Link to="/login">Login</Link>
+              </Button>
+            )}
+          </>
         )}
       </div>
     </nav>
-  );
-}
-
-export function Avatar() {
-  const user = useUserStore((state) => state.user);
-  const letter = user?.fullname[0].toUpperCase();
-  return (
-    <div className="container flex select-none items-center justify-end">
-      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 font-bold text-neutral-800">
-        {letter}
-      </div>
-    </div>
   );
 }
 

@@ -76,12 +76,12 @@ export default function Register() {
   };
 
   return (
-    <div className="py-24">
-      <div className="container flex h-[calc(100vh-12rem)] flex-col items-center justify-center">
+    <div className="py-24 h-full">
+      <div className="container flex flex-col items-center justify-center">
         {isAuthenticated ? (
           <>
             <Logo className="mb-8 block w-full text-center text-4xl" />
-            <Card className="mx-auto w-[350px]">
+            <Card className="mx-auto w-full max-w-[350px]">
               <CardHeader>
                 <h1 className="text-2xl font-semibold">You are logged in</h1>
               </CardHeader>
@@ -99,9 +99,9 @@ export default function Register() {
             </Card>
           </>
         ) : (
-          <>
+          <div>
             <Logo className="mb-8 block w-full text-center text-4xl" />
-            <Card className="mx-auto w-[350px]">
+            <Card className="mx-auto w-full max-w-[350px]">
               <CardHeader>
                 <h1 className="text-2xl font-semibold">
                   Register for an account
@@ -200,7 +200,7 @@ export default function Register() {
                 </form>
               </Form>
             </Card>
-          </>
+          </div>
         )}
       </div>
     </div>

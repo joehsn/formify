@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
-import { FaFileLines } from 'react-icons/fa6';
+import { FileText as FileTextIcon } from 'lucide-react';
 
 interface Props {
   className?: string;
@@ -11,12 +11,12 @@ export default function Logo({ className }: Props) {
     <Link
       to="/"
       className={cn(
-        'flex items-center justify-center select-none text-2xl font-bold text-neutral-900',
+        'flex select-none items-center justify-center text-2xl font-bold text-neutral-900',
         className
       )}
     >
-      <FaFileLines size={32} className="inline-block mr-2" />
-      <span className="hidden sm:inline">Formify</span>
+      <FileTextIcon size={32} className="mr-2 inline-block" />
+      <span>Formify</span>
     </Link>
   );
 }

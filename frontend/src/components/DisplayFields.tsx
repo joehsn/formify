@@ -17,7 +17,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
-import { FaStarOfLife } from 'react-icons/fa6';
+import { Asterisk as AsteriskIcon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { z } from 'zod';
 import useDefaultValues from '@/hooks/use-default-values';
@@ -76,7 +76,7 @@ function DisplayFields({ formId, fields }: Props) {
                     className={cn('text-xl font-bold first-letter:capitalize')}
                   >
                     <span>Email</span>
-                    <FaStarOfLife className="ml-1 inline-block h-3 w-3 align-top text-red-400" />
+                    <AsteriskIcon className="ml-1 inline-block h-6 w-6 align-top text-red-400" />
                   </FormLabel>
                 </CardHeader>
                 <CardContent>
@@ -109,7 +109,7 @@ function DisplayFields({ formId, fields }: Props) {
                       >
                         {singleField.label}
                         {singleField.required && (
-                          <FaStarOfLife className="ml-1 inline-block h-3 w-3 align-top text-red-400" />
+                          <AsteriskIcon className="ml-1 inline-block h-6 w-6 align-top text-red-400" />
                         )}
                       </FormLabel>
                     </CardHeader>
@@ -157,7 +157,7 @@ function DisplayFields({ formId, fields }: Props) {
                       >
                         {singleField.label}
                         {singleField.required && (
-                          <FaStarOfLife className="ml-1 inline-block h-3 w-3 align-top text-red-400" />
+                          <AsteriskIcon className="ml-1 inline-block h-6 w-6 align-top text-red-400" />
                         )}
                       </FormLabel>
                     </CardHeader>
@@ -218,7 +218,7 @@ function DisplayFields({ formId, fields }: Props) {
                       >
                         {singleField.label}
                         {singleField.required && (
-                          <FaStarOfLife className="ml-1 inline-block h-3 w-3 align-top text-red-400" />
+                          <AsteriskIcon className="ml-1 inline-block h-6 w-6 align-top text-red-400" />
                         )}
                       </FormLabel>
                     </CardHeader>
@@ -259,7 +259,7 @@ function DisplayFields({ formId, fields }: Props) {
                       >
                         {singleField.label}
                         {singleField.required && (
-                          <FaStarOfLife className="ml-1 inline-block h-3 w-3 align-top text-red-400" />
+                          <AsteriskIcon className="ml-1 inline-block h-6 w-6 align-top text-red-400" />
                         )}
                       </FormLabel>
                     </CardHeader>
@@ -293,7 +293,7 @@ function DisplayFields({ formId, fields }: Props) {
                       >
                         {singleField.label}
                         {singleField.required && (
-                          <FaStarOfLife className="ml-1 inline-block h-3 w-3 align-top text-red-400" />
+                          <AsteriskIcon className="ml-1 inline-block h-6 w-6 align-top text-red-400" />
                         )}
                       </FormLabel>
                     </CardHeader>

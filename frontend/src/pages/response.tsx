@@ -17,18 +17,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { FaCheck } from 'react-icons/fa6';
+import { Check as CheckIcon } from 'lucide-react';
+import { Printer } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useEffect, useRef } from 'react';
+import Loader from '@/components/Loader';
+import Error from '@/components/Error';
+import Login from './login';
+import PageNotFound from './A404';
 
 function ResponsePage() {
   const { formId, responseId } = useParams();
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
 
   if (!isAuthenticated) {
-    return <h1>Not authenticated</h1>;
+    return <Login />;
   }
 
   if (!formId || !responseId || !isUUID(formId) || !isUUID(responseId)) {
-    return <h1>Response not found</h1>;
+    return <PageNotFound />;
   }
 
   return <Response formId={formId} responseId={responseId} />;
@@ -40,6 +47,7 @@ interface ResponseProps {
 }
 
 function Response({ formId, responseId }: ResponseProps) {
+  const ref = useRef<HTMLButtonElement>(null);
   const response = useSWR<ResponseType>(
     `${envVars.VITE_API_URL}/responses/${formId}/${responseId}`,
     fetcher
@@ -50,21 +58,39 @@ function Response({ formId, responseId }: ResponseProps) {
     fetcher
   );
 
+  useEffect(() => {
+    const button = ref.current;
+
+    const handlePrint = () => {
+      window.print();
+    };
+
+    if (button) {
+      button.addEventListener('click', handlePrint);
+    }
+
+    return () => {
+      if (button) {
+        button.removeEventListener('click', handlePrint);
+      }
+    };
+  }, []);
+
   const isLoading = response.isLoading || form.isLoading;
   const error = response.error || form.error;
 
   if (isLoading) {
-    return <h1>Loading...</h1>;
+    return <Loader />;
   }
 
   if (error) {
-    return <h1>Error...</h1>;
+    return <Error />;
   }
 
   return (
-    <div className="mx-auto max-w-screen-md py-8">
+    <div className="mx-auto max-w-screen-md px-4 py-8">
       <div className="space-y-4">
-        <Card className="z-10 border-t-8">
+        <Card className="z-10 break-all border-t-8">
           <CardHeader>
             <div className="text-2xl font-bold text-slate-900">
               {form.data?.title}
@@ -81,7 +107,10 @@ function Response({ formId, responseId }: ResponseProps) {
             </div>
             <div>
               <p className="text-sm text-neutral-500">
-                {format(new Date(response.data?.createdAt ?? new Date()), 'PPPppp')}
+                {format(
+                  new Date(response.data?.createdAt ?? new Date()),
+                  'PPPppp'
+                )}
               </p>
             </div>
           </CardHeader>
@@ -91,6 +120,10 @@ function Response({ formId, responseId }: ResponseProps) {
           answers={response.data?.answers ?? {}}
         />
       </div>
+      <Button className="mt-4 print:hidden" ref={ref}>
+        <Printer size={18} />
+        <span>Print</span>
+      </Button>
     </div>
   );
 }
@@ -103,7 +136,10 @@ function ResponseFields({ fields, answers }: ResponseFieldsProps) {
   return (
     <>
       {fields.map((field) => (
-        <Card key={field._id}>
+        <Card
+          key={field._id}
+          className={cn('break-all print:break-inside-avoid')}
+        >
           <CardHeader>
             <div className="text-lg font-bold">{field.label}</div>
           </CardHeader>
@@ -134,12 +170,13 @@ function ResponseFields({ fields, answers }: ResponseFieldsProps) {
                     key={option + idx}
                     className="flex items-center space-x-2"
                   >
+                    {/* FIXME: Checked Checkboxs does not appear in print canvas */}
                     <Checkbox
                       id={option + idx}
+                      disabled
                       checked={(answers[field._id] as string[]).includes(
                         option
                       )}
-                      disabled
                     />
                     <Label htmlFor={option + idx}>{option}</Label>
                   </div>
@@ -169,7 +206,9 @@ function ResponseFields({ fields, answers }: ResponseFieldsProps) {
                         className="flex items-center justify-between px-2 py-2 first-of-type:rounded-t-md last-of-type:rounded-b-md hover:bg-neutral-100"
                       >
                         {option}
-                        {answers[field._id] === option && <FaCheck size={18} />}
+                        {answers[field._id] === option && (
+                          <CheckIcon size={18} />
+                        )}
                       </div>
                     ))}
                   </CardContent>

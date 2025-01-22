@@ -1,23 +1,24 @@
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import useUserStore from '@/lib/stores/user.store';
 import { cn, envVars, fetcher } from '@/lib/utils';
 import { FormType, ResponseType } from '@/types';
 import { format } from 'date-fns';
-import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import { validate as isUUID } from 'uuid';
+import PageNotFound from './A404';
+import Login from './login';
 
 function ResponsesPage() {
   const { formId } = useParams();
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
 
   if (!isAuthenticated) {
-    return <h1>Not authenticated</h1>;
+    return <Login />;
   }
 
   if (!formId || !isUUID(formId)) {
-    return <h1>Form not found</h1>;
+    return <PageNotFound />;
   }
   return <Responses formId={formId} />;
 }
@@ -81,10 +82,12 @@ function Responses({ formId }: ResponsesProps) {
               onClick={() =>
                 navigate(`/response/${formId}/${response.responseId}`)
               }
-              className="cursor-pointer transition-shadow duration-300 hover:shadow-simple"
+              className="cursor-pointer break-all transition-shadow duration-300 hover:shadow-simple"
             >
               <CardContent className={cn('p-6')}>
-                <h1>by: {response.email}</h1>
+                <div>
+                  by: <span className="font-bold">{response.email}</span>
+                </div>
               </CardContent>
             </Card>
           ))}

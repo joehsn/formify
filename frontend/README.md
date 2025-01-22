@@ -1,50 +1,97 @@
-# React + TypeScript + Vite
+# Formify 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The frontend of **Formify** is a responsive, user-friendly interface for creating, managing, and analyzing forms. Built with React.js, it offers seamless interaction and dynamic features for an optimal user experience.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Dynamic Form Builder:** Drag-and-drop interface for creating forms with live previews.
+- **Pagination and Search:** Efficient navigation and management of forms and responses.
+- **Custom Field Components:** Includes fields like date pickers, dropdowns, and text fields.
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **React.js**: Core framework for building UI components.
+- **Zustand**: State management for predictable and scalable application state.
+- **Tailwind CSS**: Utility-first CSS framework for fast styling.
+- **Axios**: HTTP client for seamless API communication.
+- **React Router**: Navigation and routing.
+- **React Datepicker**: User-friendly date selection.
+- **And many more...**
 
-- Configure the top-level `parserOptions` property like this:
+## Installation
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
+To get started with the Formify frontend:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/joehsn/formify.git
+   cd formify/frontend
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env.local` file in the `frontend` directory with the following keys:
+   ```env
+   VITE_API_URL=http://localhost:5000
+   ```
+
+4. Start the development server:
+   ```bash
+   npm start
+   ```
+
+   The app will be accessible at [http://localhost:3000](http://localhost:3000).
+
+## Directory Structure
+
+```plaintext
+frontend/
+├── public/            # Static assets
+├── src/
+│   └ components/      # Reusable UI components
+│     └── u/           # Shadcn UI components (e.g., Button, Input, Modal)
+│   ├── pages/         # Application pages (e.g., Home, Dashboard, FormBuilder)
+│   ├── hooks/         # Custom hooks
+│   └── lib/           # Utility functions and constants
+│       ├── schemas/   # Form and response schemas
+│       └── stores/    # Zustand store configuration
+│   ├── types/         # TypeScript types
+│   ├── App.js         # Main application component
+│   ├── main.js        # Entry point
+│   ├── Router.js      # Application routing configuration
+├── .env.local         # Environment variables
+└── package.json       # Project configuration and dependencies
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Available Scripts
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react';
+In the `frontend` directory, you can run:
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-});
-```
+### `npm start`
+Runs the app in development mode. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+### `npm run build`
+Builds the app for production to the `build` folder. It bundles React in production mode for optimized performance.
+
+### `npm run lint`
+Checks the codebase for linting errors.
+
+### `npm run lint:fix`
+Fixes linting errors automatically.
+
+## Deployment
+
+1. Build the application:
+   ```bash
+   npm run build
+   ```
+
+2. Deploy the contents of the `build` directory to your preferred hosting service (e.g., AWS S3, Vercel, Netlify).
+
+## Contact
+
+For questions or suggestions, reach out at [joehsn@outlook.com](mailto:joehsn@outloo.com).
+

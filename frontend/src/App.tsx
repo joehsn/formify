@@ -4,6 +4,8 @@ import { Toaster } from '@/components/ui/toaster';
 import useUserStore from './lib/stores/user.store.ts';
 import { envVars, fetcher } from './lib/utils.ts';
 import useSWR from 'swr';
+import Loader from './components/Loader.tsx';
+import Error from './components/Error.tsx';
 
 function App() {
   const onLogin = useUserStore((state) => state.onLogin);
@@ -23,8 +25,8 @@ function App() {
       isNotAuthenticated();
     }
   }, [data, onLogin, isNotAuthenticated]);
-  if (isLoading && !isAuthenticated) return <h1>Loading...</h1>;
-  if (error) return <h1>Error...</h1>;
+  if (isLoading && !isAuthenticated) return <Loader />;
+  if (error) return <Error />;
   return (
     <>
       <Router />

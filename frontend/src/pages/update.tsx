@@ -21,15 +21,42 @@ import useUserStore from '@/lib/stores/user.store';
 import { cn, envVars, fetcher } from '@/lib/utils';
 import { FieldType, FormType } from '@/types';
 import { useEffect, useRef } from 'react';
-import { FaFloppyDisk, FaPlus, FaTrash } from 'react-icons/fa6';
+import {
+  ChevronUp as ChevronUpIcon,
+  Save as SaveIcon,
+  Plus as PlusIcon,
+  Trash as TrashIcon,
+} from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import { validate as isUUID } from 'uuid';
 import PageNotFound from './A404';
 import Login from './login';
 import { handleUpdateForm } from '@/lib/handlers';
+import FAB from '@/components/FAB';
+import Loader from '@/components/Loader';
+import Error from '@/components/Error';
 
 function UpdatePage() {
+  const ref = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const button = ref.current;
+    const handleScroll = () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    if (button) {
+      button.addEventListener('click', handleScroll);
+    }
+
+    return () => {
+      if (button) {
+        button.removeEventListener('click', handleScroll);
+      }
+    };
+  }, []);
+
   const { formId } = useParams();
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
 
@@ -42,7 +69,13 @@ function UpdatePage() {
   }
 
   return (
+    <>
       <UpdateForm formId={formId} />
+      <FAB ref={ref} aria-label="Scroll to top">
+        <ChevronUpIcon size={32} />
+        <span className="sr-only">Scroll to top</span>
+      </FAB>
+    </>
   );
 }
 
@@ -71,7 +104,7 @@ function UpdateForm({ formId }: { formId: string }) {
   }, [data, setForm]);
 
   if (isLoading && !data) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   if (!form) {
@@ -79,7 +112,7 @@ function UpdateForm({ formId }: { formId: string }) {
   }
 
   if (error) {
-    return <div>Error loading the form</div>;
+    return <Error />;
   }
   return (
     <div className="relative mx-auto w-full max-w-screen-md space-y-6 px-4 py-8">
@@ -116,7 +149,7 @@ function UpdateForm({ formId }: { formId: string }) {
             className="w-full"
             onClick={() => handleUpdateForm(form)}
           >
-            <FaFloppyDisk size={32} />
+            <SaveIcon size={32} />
             <span>Update Form</span>
           </Button>
           <Select
@@ -144,7 +177,7 @@ function UpdateForm({ formId }: { formId: string }) {
         className="w-full"
         onClick={() => addFormField()}
       >
-        <FaPlus size={32} />
+        <PlusIcon size={32} />
         <span>New Field</span>
       </Button>
     </div>
@@ -156,11 +189,15 @@ function Fields() {
   const form = useUpdateFormStore((state) => state.form);
   const setFieldLabel = useUpdateFormStore((state) => state.setFieldLabel);
   const setFieldType = useUpdateFormStore((state) => state.setFieldType);
-  const setFieldRequired = useUpdateFormStore((state) => state.setFieldRequired);
+  const setFieldRequired = useUpdateFormStore(
+    (state) => state.setFieldRequired
+  );
   const removeField = useUpdateFormStore((state) => state.removeFormField);
   const setFieldOption = useUpdateFormStore((state) => state.setFieldOption);
   const addFieldOption = useUpdateFormStore((state) => state.addFieldOption);
-  const removeFieldOption = useUpdateFormStore((state) => state.removeFieldOption);
+  const removeFieldOption = useUpdateFormStore(
+    (state) => state.removeFieldOption
+  );
   const types = [
     'text',
     'email',
@@ -264,7 +301,7 @@ function Fields() {
                     variant="outline"
                     onClick={() => addFieldOption(field._id)}
                   >
-                    <FaPlus size={32} />
+                    <PlusIcon size={32} />
                     New Option
                   </Button>
                 </>
@@ -294,7 +331,7 @@ function Fields() {
                   removeField(field._id);
                 }}
               >
-                <FaTrash size={24} />
+                <TrashIcon size={24} />
                 <span className="sr-only">Delete</span>
               </Button>
             </div>

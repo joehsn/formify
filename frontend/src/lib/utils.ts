@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { z, ZodTypeAny } from 'zod';
 import { envSchema } from './schemas/';
 import { FieldType } from '@/types';
@@ -42,8 +42,12 @@ export async function fetcher(url: string, method: 'GET' | 'POST' = 'GET') {
     });
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log(error.response?.data?.message || error.message);
+    if (error instanceof z.ZodError) {
+      console.error(error.errors);
+    } else if (error instanceof AxiosError) {
+      console.error(error.response?.data.message);
+    } else {
+      console.error(error);
     }
   }
 }

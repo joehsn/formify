@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { CalendarIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -31,7 +31,8 @@ export function DatePicker({ date, setDate }: Props) {
           {date ? format(date, 'PPP') : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
+      <PopoverContent className="w-auto p-0" align='start'>
+        {/* TODO: Manths and years dropdowns */}
         <Calendar
           mode="single"
           selected={date}
