@@ -21,9 +21,29 @@ import {
 } from '@/components/ui/form';
 import { useNavigate } from 'react-router-dom';
 import useUserStore from '@/lib/stores/user.store';
-import { handleLogOut, handleRegister } from '@/lib/handlers';
+import { handleLogOut } from '@/lib/handlers';
+import { Eye as EyeIcon, EyeOff as EyeOffIcon } from 'lucide-react';
+import { produce } from 'immer';
+import { useState } from 'react';
+import axios from 'axios';
+import { envVars } from '@/lib/utils';
+import { toast } from '@/hooks/use-toast';
+import { ToastAction } from '@/components/ui/toast';
+
+/**
+ * TODOS:
+ * 1. disable the submit button when the form is submitting
+ * 2.
+ */
 
 export default function Register() {
+  const [isVisible, setIsVisible] = useState<{
+    first: boolean;
+    second: boolean;
+  }>({
+    first: false,
+    second: false,
+  });
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   const onLogout = useUserStore((state) => state.onLogout);
   const navigate = useNavigate();
@@ -38,9 +58,48 @@ export default function Register() {
   });
   const onSubmit = async (data: RegisterType) => {
     try {
-      await handleRegister(data, () => navigate('/login'));
+      const response = await axios.post(
+        `${envVars.VITE_API_URL}/users/register`,
+        JSON.stringify({
+          fullname: data.name,
+          email: data.email,
+          password: data.password,
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+        }
+      );
+      toast({
+        title: 'Account created',
+        description: response.data.message,
+        duration: 5000,
+      });
+      navigate('/login');
     } catch (error) {
-      console.error(error);
+      if (axios.isAxiosError(error)) {
+        toast({
+          title: error.response?.statusText || 'Error',
+          description: error.response?.data?.message || 'An error occurred',
+          duration: 5000,
+          variant: 'destructive',
+          action:
+            error.status === 409 ? (
+              <ToastAction altText="Login" onClick={() => navigate('/login')}>
+                Login
+              </ToastAction>
+            ) : undefined,
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: 'An error occurred while creating your account',
+          duration: 5000,
+          variant: 'destructive',
+        });
+      }
     }
   };
 
@@ -131,12 +190,33 @@ export default function Register() {
                         <FormItem>
                           <FormLabel>Password</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="********"
-                              type="password"
-                              autoComplete="new-password"
-                              {...field}
-                            />
+                            <div className="relative">
+                              <Input
+                                placeholder="Enter your password"
+                                type={isVisible.first ? 'text' : 'password'}
+                                autoComplete="new-password"
+                                {...field}
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                className="absolute right-0 top-1/2 -translate-y-1/2 transform"
+                                onClick={() =>
+                                  setIsVisible(
+                                    produce((draft) => {
+                                      draft.first = !draft.first;
+                                    })
+                                  )
+                                }
+                                aria-label="Toggle password visibility"
+                              >
+                                {isVisible.first ? (
+                                  <EyeOffIcon size={20} />
+                                ) : (
+                                  <EyeIcon size={20} />
+                                )}
+                              </Button>
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -149,12 +229,33 @@ export default function Register() {
                         <FormItem>
                           <FormLabel>Confirm password</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="********"
-                              type="password"
-                              autoComplete="new-password"
-                              {...field}
-                            />
+                            <div className="relative">
+                              <Input
+                                placeholder="Enter your password again"
+                                type={isVisible.second ? 'text' : 'password'}
+                                autoComplete="new-password"
+                                {...field}
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                className="absolute right-0 top-1/2 -translate-y-1/2 transform"
+                                onClick={() =>
+                                  setIsVisible(
+                                    produce((draft) => {
+                                      draft.second = !draft.second;
+                                    })
+                                  )
+                                }
+                                aria-label="Toggle password visibility"
+                              >
+                                {isVisible.second ? (
+                                  <EyeOffIcon size={20} />
+                                ) : (
+                                  <EyeIcon size={20} />
+                                )}
+                              </Button>
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -162,7 +263,11 @@ export default function Register() {
                     />
                   </CardContent>
                   <CardFooter className="flex-col items-start gap-y-4">
-                    <Button type="submit" className="w-full">
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={form.formState.isSubmitting}
+                    >
                       Register
                     </Button>
                   </CardFooter>
