@@ -4,8 +4,9 @@
   "description": "RESTful API for Formify",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "nodemon --exec ts-node src/index.ts",
-    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "nodemon --exec babel-node --extensions \".ts\" src/index.ts",
+    "build": "babel src --extensions \".ts\" --out-dir dist",
     "lint": "eslint",
     "lint:fix": "eslint . --fix",
     "prettier": "prettier . --check",
@@ -27,6 +28,11 @@
   },
   "homepage": "https://github.com/joehsn/formify#readme",
   "devDependencies": {
+    "@babel/cli": "^7.26.4",
+    "@babel/core": "^7.26.7",
+    "@babel/node": "^7.26.0",
+    "@babel/preset-env": "^7.26.7",
+    "@babel/preset-typescript": "^7.26.0",
     "@eslint/js": "^9.17.0",
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",

@@ -54,7 +54,6 @@ export async function getUser(req: Request, res: Response) {
 export async function register(req: Request, res: Response) {
   try {
     const data = registerSchema.parse(req.body);
-    const hashed = await hashPass(data.password);
 
     const isUserExists = await User.findOne({
       email: data.email,
@@ -67,6 +66,7 @@ export async function register(req: Request, res: Response) {
       return;
     }
 
+    const hashed = await hashPass(data.password);
     const user = new User({ ...data, password: hashed });
     await user.save();
     res.status(200).json({

@@ -6,6 +6,7 @@ import errorHandler from './middlewares/error.middleware';
 import { userRouter, formRouter, responseRouter } from './routes';
 import setupMiddlewares from './middlewares';
 import logger from './utils/logger';
+import { exit } from 'process';
 
 dotenv.config();
 
@@ -18,7 +19,7 @@ const envVars = envSchema.parse(process.env);
     console.log('Connected to the database successfully.');
   } catch (error) {
     console.error('Database connection failed:', error);
-    process.exit(1); // Exit process on failure
+    exit(1); // Exit process on failure
   }
 })();
 

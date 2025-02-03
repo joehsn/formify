@@ -2,6 +2,7 @@
 
 ### Features
 
+- [] Dealing Images and Files in the app.
 - [] Implement pagination for foms and responses.
 - [] Implement auto save for forms.
 - [] Maintain a local copy of the form in the browser and save it to the server every 5 minutes or user save it explicitly.
@@ -18,6 +19,8 @@
 - [] Implement a preview feature for the form and the response.
 - [] Add "Other" option to the radio and checkbox field types.
 - [] Add responses count to the form model.
+- [] Handle password reset functionality.
+- [] Add keep me logged in for 30 days feature.
 
 ### Backend
 
@@ -59,3 +62,4 @@
 - [x] Correct the state of user logged in or not in the application.
 - [x] Update docment's title on every route change and based on form's title.
 - [] Add copy functionality to the app.
+- [] Create forgot password page.
