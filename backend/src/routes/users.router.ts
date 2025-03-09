@@ -12,4 +12,8 @@ router.post('/login', authenticate, UserController.login);
 
 router.post('/logout', UserController.logout);
 
+router.post('/forgot-password', UserController.forgotPassword);
+
+router.post('/change-password', UserController.changePassword);
+
 export default router;

@@ -1,10 +1,13 @@
 import { Response, Request } from 'express';
-import { ZodError } from 'zod';
+import { z, ZodError } from 'zod';
 import { fromZodError } from 'zod-validation-error';
 import logger from '../utils/logger';
 import { hashPass } from '../utils';
 import User from '../models/user.model';
 import registerSchema from '../lib/schemas/register.schema';
+import jwt from 'jsonwebtoken';
+import sendEmail from '../utils/email';
+import bcrypt from "bcrypt"
 
 /**
  * @brief Fetches user data if the user is authenticated.
@@ -71,7 +74,6 @@ export async function register(req: Request, res: Response) {
     await user.save();
     res.status(200).json({
       message: 'User created successfully',
-      user,
     });
   } catch (error) {
     if (error instanceof ZodError) {
@@ -132,4 +134,138 @@ export function logout(req: Request, res: Response) {
       message: 'User logged out successfully',
     });
   });
+}
+
+export async function forgotPassword(req: Request, res: Response) {
+  if (req.isAuthenticated()) {
+    res.status(409).json({
+      message: 'Please log out first',
+    });
+    return;
+  }
+  try {
+    const { email } = z
+      .object({
+        email: z.string().email(),
+      })
+      .parse(req.body);
+
+    const user = await User.findOne({ email }).exec();
+
+    if (!user) {
+      res.status(404).json({
+        message: 'User does not exists',
+      });
+      return;
+    }
+
+    const {
+      JWT_SECRET,
+      CLIENT_URL
+    } = z.object({
+      JWT_SECRET: z.string(),
+      CLIENT_URL: z.string().url(),
+    }).parse(process.env);
+    const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+      expiresIn: '15m',
+    });
+
+    const url = new URL('/forgot-password/', CLIENT_URL.toString());
+    url.searchParams.append('token', token);
+
+    const emailOptions = {
+      name: user.fullname,
+      email,
+      resetLink: url.toString(),
+    };
+
+    await sendEmail(emailOptions);
+
+    res.status(200).json({
+      message: 'Reset link sent successfully',
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      const fromError = fromZodError(error);
+      logger.error('An error occurred while sending a token', fromError);
+      res.status(400).json({
+        message: 'An error occurred while sending a token',
+      });
+    }
+    logger.error('An error occurred while sending a token: ' + error);
+    res.status(500).json({
+      message: 'An error occurred while sending a token',
+    });
+  }
+}
+
+/**
+ * @brief Changes the user's password.
+ *
+ * This function changes the user's password if the token is valid and the new
+ * password is different from the old password.
+ *
+ * @param req The Express request object containing the token and new password.
+ * @param res The Express response object used to send the response.
+ * @throws 400 Bad Request if the token is invalid or the new password is the same as the old password.
+  * @throws 500 Internal Server Error if an error occurs while changing the password.
+  * @throws 404 Not Found if the user doesn't exists.
+  */
+export async function changePassword(req: Request, res: Response) {
+  try {
+    const { token, newPassword } = z.object({
+      token: z.string(),
+      newPassword: z.string().min(8),
+    }).parse(req.body);
+
+    const JWT_SECRET = z.string().parse(process.env.JWT_SECRET)
+
+    const decoded = jwt.verify(token, JWT_SECRET) as {
+      _id: string;
+    };
+
+    const user = await User.findById(decoded._id).exec();
+
+    if (!user) {
+      res.status(404).json({
+        message: "User doesn't exists",
+      })
+      return;
+    }
+
+    const isSamePass = await bcrypt.compare(newPassword, user.password);
+
+    if (isSamePass) {
+      res.status(400).json({
+        message: "New password can't be the same as the old password"
+      })
+      return;
+    }
+
+    user.password = await hashPass(newPassword);
+
+    await user.save();
+
+    res.status(200).json({
+      message: 'Password changed successfully!'
+    })
+  } catch (error) {
+    if (error instanceof ZodError) {
+      const fromError = fromZodError(error);
+      logger.error('An error occurred while changing password', fromError);
+      res.status(400).json({
+        message: 'An error occurred while changing password',
+      });
+    }
+    if (error instanceof jwt.TokenExpiredError) {
+      res.status(400).json({
+        message: 'Token expired',
+      });
+      return;
+    }
+    logger.error('An error occurred while changing password: ' + error);
+    res.status(500).json({
+      message: 'An error occurred while changing password',
+    })
+  }
 }

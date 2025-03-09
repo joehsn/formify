@@ -31,6 +31,7 @@ function setupMiddlewares(
   app: express.Application,
   envVars: Record<string, string>
 ) {
+  app.set('view engine', 'ejs')
   app.use(
     morgan(':method :url :status - :response-time ms', {
       stream: { write: (message) => logger.info(message.trim()) },

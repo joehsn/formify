@@ -29,7 +29,7 @@ const envSchema = z.object({
       required_error: 'CLIENT_URL environment variable is missing',
     })
     .url('CLIENT_URL is not a valid URI')
-    .default('http://localhost:3000'),
+    .default('http://localhost:5173'),
 });
 
 export type ENVType = z.infer<typeof envSchema>;
