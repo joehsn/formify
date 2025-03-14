@@ -1,17 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Layout from './components/layout';
-import {
-  PageNotFound,
-  Home,
-  Login,
-  Register,
-  CreatePage,
-  UpdatePage,
-  DisplayPage,
-  Account,
-} from './pages';
-import ResponsesPage from './pages/responses';
-import ResponsePage from './pages/response';
+import * as Page from './pages';
 
 function Router() {
   return (
@@ -19,24 +8,26 @@ function Router() {
       <Routes>
         <Route path="/" element={<Layout />}>
           {/* Home route */}
-          <Route index element={<Home />} />
+          <Route index element={<Page.Home />} />
           {/* Form routes */}
-          <Route path="/form/:formId" element={<DisplayPage />} />
-          <Route path="/create/:formId" element={<CreatePage />} />
-          <Route path="/update/:formId" element={<UpdatePage />} />
+          <Route path="/form/:formId" element={<Page.DisplayPage />} />
+          <Route path="/create/:formId" element={<Page.CreatePage />} />
+          <Route path="/update/:formId" element={<Page.UpdatePage />} />
           {/* Responses routes */}
-          <Route path="/responses/:formId" element={<ResponsesPage />} />
+          <Route path="/responses/:formId" element={<Page.ResponsesPage />} />
           <Route
             path="/response/:formId/:responseId"
-            element={<ResponsePage />}
+            element={<Page.ResponsePage />}
           />
           {/* Account route */}
-          <Route path="/account" element={<Account />} />
+          <Route path="/account" element={<Page.Account />} />
           {/* Catch all route */}
-          <Route path="*" element={<PageNotFound />} />
+          <Route path="*" element={<Page.PageNotFound />} />
         </Route>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Page.Login />} />
+        <Route path="/register" element={<Page.Register />} />
+        <Route path="/forgot-password" element={<Page.ForgotPassword />} />
+        <Route path="/reset-password" element={<Page.ResetPassword />} />
       </Routes>
     </BrowserRouter>
   );

@@ -175,8 +175,14 @@ export default function Login() {
                       </FormItem>
                     )}
                   />
-                  <Button variant="link" asChild>
-                    <Link to="/forgot-password">Forgot password?</Link>
+                  <Button variant="link" type="button" onClick={() => {
+                    const email = loginSchema.shape.email.safeParse(form.getValues("email"))
+                    if (email.success)
+                      navigate("/forgot-password?email=" + encodeURIComponent(email.data));
+                    else
+                      navigate("/forgot-password");
+                  }}>
+                    Forgot password?
                   </Button>
                 </CardContent>
                 <CardFooter className="flex-col items-start gap-y-4">
@@ -185,7 +191,7 @@ export default function Login() {
                     type="submit"
                     disabled={form.formState.isSubmitting}
                   >
-                    <Link to="/login">Login</Link>
+                    Login
                   </Button>
                 </CardFooter>
               </form>

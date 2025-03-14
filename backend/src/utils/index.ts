@@ -9,7 +9,7 @@ import { Request, Response, NextFunction } from 'express';
  */
 export async function hashPass(password: string) {
   const salt = await genSalt(10);
-  const hashed = await hash(password, salt);
+  const hashed = hash(password, salt);
   return hashed;
 }
 

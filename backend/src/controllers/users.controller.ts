@@ -170,7 +170,7 @@ export async function forgotPassword(req: Request, res: Response) {
       expiresIn: '15m',
     });
 
-    const url = new URL('/forgot-password/', CLIENT_URL.toString());
+    const url = new URL('/reset-password/', CLIENT_URL.toString());
     url.searchParams.append('token', token);
 
     const emailOptions = {
@@ -224,7 +224,9 @@ export async function changePassword(req: Request, res: Response) {
       _id: string;
     };
 
-    const user = await User.findById(decoded._id).exec();
+    const user = await User.findById(decoded._id).select({
+      password: true
+    }).exec();
 
     if (!user) {
       res.status(404).json({
@@ -236,7 +238,7 @@ export async function changePassword(req: Request, res: Response) {
     const isSamePass = await bcrypt.compare(newPassword, user.password);
 
     if (isSamePass) {
-      res.status(400).json({
+      res.status(409).json({
         message: "New password can't be the same as the old password"
       })
       return;

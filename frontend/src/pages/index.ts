@@ -6,3 +6,7 @@ export { default as CreatePage } from './create';
 export { default as UpdatePage } from './update';
 export { default as DisplayPage } from './display';
 export { default as Account } from './account';
+export { default as ResponsesPage } from './responses';
+export { default as ResponsePage } from './response';
+export { default as ForgotPassword } from './forgot_password';
+export { default as ResetPassword } from './reset_password';

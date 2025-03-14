@@ -23,7 +23,6 @@ import { useNavigate } from 'react-router-dom';
 import useUserStore from '@/lib/stores/user.store';
 import { handleLogOut } from '@/lib/handlers';
 import { Eye as EyeIcon, EyeOff as EyeOffIcon } from 'lucide-react';
-import { produce } from 'immer';
 import { useState } from 'react';
 import axios from 'axios';
 import { envVars } from '@/lib/utils';
@@ -37,13 +36,7 @@ import { ToastAction } from '@/components/ui/toast';
  */
 
 export default function Register() {
-  const [isVisible, setIsVisible] = useState<{
-    first: boolean;
-    second: boolean;
-  }>({
-    first: false,
-    second: false,
-  });
+  const [isVisible, setIsVisible] = useState(false);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   const onLogout = useUserStore((state) => state.onLogout);
   const navigate = useNavigate();
@@ -193,7 +186,7 @@ export default function Register() {
                             <div className="relative">
                               <Input
                                 placeholder="Enter your password"
-                                type={isVisible.first ? 'text' : 'password'}
+                                type={isVisible ? 'text' : 'password'}
                                 autoComplete="new-password"
                                 {...field}
                               />
@@ -202,15 +195,11 @@ export default function Register() {
                                 variant="ghost"
                                 className="absolute right-0 top-1/2 -translate-y-1/2 transform"
                                 onClick={() =>
-                                  setIsVisible(
-                                    produce((draft) => {
-                                      draft.first = !draft.first;
-                                    })
-                                  )
+                                  setIsVisible((prev) => !prev)
                                 }
                                 aria-label="Toggle password visibility"
                               >
-                                {isVisible.first ? (
+                                {isVisible ? (
                                   <EyeOffIcon size={20} />
                                 ) : (
                                   <EyeIcon size={20} />
@@ -232,29 +221,10 @@ export default function Register() {
                             <div className="relative">
                               <Input
                                 placeholder="Enter your password again"
-                                type={isVisible.second ? 'text' : 'password'}
+                                type={isVisible ? 'text' : 'password'}
                                 autoComplete="new-password"
                                 {...field}
                               />
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                className="absolute right-0 top-1/2 -translate-y-1/2 transform"
-                                onClick={() =>
-                                  setIsVisible(
-                                    produce((draft) => {
-                                      draft.second = !draft.second;
-                                    })
-                                  )
-                                }
-                                aria-label="Toggle password visibility"
-                              >
-                                {isVisible.second ? (
-                                  <EyeOffIcon size={20} />
-                                ) : (
-                                  <EyeIcon size={20} />
-                                )}
-                              </Button>
                             </div>
                           </FormControl>
                           <FormMessage />
