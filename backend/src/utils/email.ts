@@ -1,43 +1,43 @@
 import path from 'path';
 import ejs from 'ejs';
+import { Worker } from 'bullmq';
 import { z } from 'zod';
 import nodemailer from 'nodemailer';
+import dotenv from "dotenv"
+import logger from './logger';
 
-interface sendEmailProps {
-  name: string;
-  resetLink: string;
-  email: string;
+dotenv.config();
+
+const envars = z
+  .object({
+    SMTP_HOST: z.string(),
+    SMTP_PORT: z.string(),
+    SMTP_USERNAME: z.string(),
+    SMTP_PASSWORD: z.string(),
+    USER_EMAIL: z.string(),
+    REDIS_HOST: z.string().default('127.0.0.1'),
+    REDIS_PORT: z.string().default('6379'),
+  })
+  .safeParse(process.env);
+
+if (!envars.success) {
+  throw new Error("Couldn't parse environment variables");
 }
 
-/**
- * Send email to user with reset link for password reset
- * @param name, resetLink, email
- */
-async function sendEmail({
-  name,
-  resetLink,
-  email,
-}: sendEmailProps): Promise<void> {
-  try {
-    const envars = z
-      .object({
-        SMTP_HOST: z.string(),
-        SMTP_PORT: z.string(),
-        SMTP_USERNAME: z.string(),
-        SMTP_PASSWORD: z.string(),
-        USER_EMAIL: z.string(),
-      })
-      .parse(process.env);
-    const transport = nodemailer.createTransport({
-      auth: {
-        user: envars.SMTP_USERNAME,
-        pass: envars.SMTP_PASSWORD,
-      },
-      host: envars.SMTP_HOST,
-      port: envars.SMTP_PORT,
-      secure: false,
-    });
+const transporter = nodemailer.createTransport({
+  auth: {
+    user: envars.data.SMTP_USERNAME,
+    pass: envars.data.SMTP_PASSWORD,
+  },
+  host: envars.data.SMTP_HOST,
+  port: Number(envars.data.SMTP_PORT),
+  secure: false,
+} as nodemailer.TransportOptions);
 
+const emailWorker = new Worker(
+  'emailQueue',
+  async (job) => {
+    const { name, email, resetLink } = job.data;
     const emailTemplate = await ejs.renderFile(
       path.join(__dirname, '..', 'views', 'email.ejs'),
       {
@@ -45,20 +45,20 @@ async function sendEmail({
         resetLink,
       }
     );
-
-    // Email options
-    const mailOptions = {
-      from: envars.USER_EMAIL,
+    await transporter.sendMail({
+      from: envars.data.USER_EMAIL,
       to: email,
-      subject: 'Password Reset Request | Formify',
+      subject: 'Password Reset',
       html: emailTemplate,
-    };
-
-    // Send email
-    await transport.sendMail(mailOptions);
-  } catch (error) {
-    console.error(error);
+    });
+    logger.log('info', `Email sent to ${email}`);
+  },
+  {
+    connection: {
+      host: envars.data.REDIS_HOST,
+      port: Number(envars.data.REDIS_PORT),
+    },
   }
-}
+);
 
-export default sendEmail;
+export default emailWorker;

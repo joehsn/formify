@@ -6,8 +6,8 @@ import { hashPass } from '../utils';
 import User from '../models/user.model';
 import registerSchema from '../lib/schemas/register.schema';
 import jwt from 'jsonwebtoken';
-import sendEmail from '../utils/email';
-import bcrypt from "bcrypt"
+import bcrypt from 'bcrypt';
+import emailQueue from '../utils/queue';
 
 /**
  * @brief Fetches user data if the user is authenticated.
@@ -159,13 +159,12 @@ export async function forgotPassword(req: Request, res: Response) {
       return;
     }
 
-    const {
-      JWT_SECRET,
-      CLIENT_URL
-    } = z.object({
-      JWT_SECRET: z.string(),
-      CLIENT_URL: z.string().url(),
-    }).parse(process.env);
+    const { JWT_SECRET, CLIENT_URL } = z
+      .object({
+        JWT_SECRET: z.string(),
+        CLIENT_URL: z.string().url(),
+      })
+      .parse(process.env);
     const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
       expiresIn: '15m',
     });
@@ -179,7 +178,9 @@ export async function forgotPassword(req: Request, res: Response) {
       resetLink: url.toString(),
     };
 
-    await sendEmail(emailOptions);
+    // FIXME: It's add to the queue but it doesn't send the actual email.
+    // I inspected redis keys and it's there!
+    await emailQueue.add('sendEmail', emailOptions);
 
     res.status(200).json({
       message: 'Reset link sent successfully',
@@ -208,30 +209,34 @@ export async function forgotPassword(req: Request, res: Response) {
  * @param req The Express request object containing the token and new password.
  * @param res The Express response object used to send the response.
  * @throws 400 Bad Request if the token is invalid or the new password is the same as the old password.
-  * @throws 500 Internal Server Error if an error occurs while changing the password.
-  * @throws 404 Not Found if the user doesn't exists.
-  */
+ * @throws 500 Internal Server Error if an error occurs while changing the password.
+ * @throws 404 Not Found if the user doesn't exists.
+ */
 export async function changePassword(req: Request, res: Response) {
   try {
-    const { token, newPassword } = z.object({
-      token: z.string(),
-      newPassword: z.string().min(8),
-    }).parse(req.body);
+    const { token, newPassword } = z
+      .object({
+        token: z.string(),
+        newPassword: z.string().min(8),
+      })
+      .parse(req.body);
 
-    const JWT_SECRET = z.string().parse(process.env.JWT_SECRET)
+    const JWT_SECRET = z.string().parse(process.env.JWT_SECRET);
 
     const decoded = jwt.verify(token, JWT_SECRET) as {
       _id: string;
     };
 
-    const user = await User.findById(decoded._id).select({
-      password: true
-    }).exec();
+    const user = await User.findById(decoded._id)
+      .select({
+        password: true,
+      })
+      .exec();
 
     if (!user) {
       res.status(404).json({
         message: "User doesn't exists",
-      })
+      });
       return;
     }
 
@@ -239,8 +244,8 @@ export async function changePassword(req: Request, res: Response) {
 
     if (isSamePass) {
       res.status(409).json({
-        message: "New password can't be the same as the old password"
-      })
+        message: "New password can't be the same as the old password",
+      });
       return;
     }
 
@@ -249,8 +254,8 @@ export async function changePassword(req: Request, res: Response) {
     await user.save();
 
     res.status(200).json({
-      message: 'Password changed successfully!'
-    })
+      message: 'Password changed successfully!',
+    });
   } catch (error) {
     if (error instanceof ZodError) {
       const fromError = fromZodError(error);
@@ -268,6 +273,6 @@ export async function changePassword(req: Request, res: Response) {
     logger.error('An error occurred while changing password: ' + error);
     res.status(500).json({
       message: 'An error occurred while changing password',
-    })
+    });
   }
 }
