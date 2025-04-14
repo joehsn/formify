@@ -1,83 +1,82 @@
-import mongoose from 'mongoose';
+import mongoose, { InferSchemaType } from 'mongoose';
 
-const formSchema = new mongoose.Schema({
-  id: {
-    type: mongoose.Schema.Types.UUID,
-    required: true,
-    unique: true,
-  },
-  title: {
+const fieldSchema = new mongoose.Schema({
+  fieldLabel: {
     type: String,
     required: true,
-    trim: true,
+    maxLength: 255,
   },
-  description: {
+  fieldType: {
     type: String,
-    required: false,
-    trim: true,
-    default: '',
-  },
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    enum: [
+      'text',
+      'paragraph',
+      'email',
+      'number',
+      'radio',
+      'checkbox',
+      'dropdown',
+      'date',
+      'time',
+      'rating',
+    ],
     required: true,
   },
-  fields: [
-    {
-      label: {
-        type: String,
-        required: true,
-      },
-      type: {
-        type: String,
-        enum: [
-          'text',
-          'email',
-          'number',
-          'radio',
-          'checkbox',
-          'dropdown',
-          'date',
-        ],
-        required: true,
-      },
-      options: [
-        {
-          type: String,
-        },
-      ],
-      required: {
-        type: Boolean,
-        default: false,
-      },
-      validations: {
-        maxLength: {
-          type: Number,
-        },
-        minLength: {
-          type: Number,
-        },
-        pattern: {
-          type: String,
-        },
-      },
+  fieldOptions: [String],
+  fieldRequired: {
+    type: Boolean,
+    default: false,
+  },
+  fieldValidations: {
+    maxLengthValidation: {
+      type: Number,
     },
-  ],
-  status: {
-    type: String,
-    enum: ['draft', 'published', 'closed'],
-    default: 'draft',
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
+    minLengthValidation: {
+      type: Number,
+    },
+    patternValidation: {
+      type: String,
+    },
   },
 });
 
+const formSchema = new mongoose.Schema(
+  {
+    _id: {
+      type: mongoose.Schema.Types.UUID,
+      default: () => new mongoose.Types.UUID(),
+    },
+    formTitle: {
+      type: String,
+      required: true,
+      trim: true,
+      maxLength: 255,
+    },
+    formDesc: {
+      type: String,
+      trim: true,
+      default: '',
+      maxLength: 1020,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    formFields: [fieldSchema],
+    formStatus: {
+      type: String,
+      enum: ['draft', 'published', 'closed'],
+      default: 'draft',
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
 const Form = mongoose.model('forms', formSchema);
+
+export type IForm = InferSchemaType<typeof formSchema>;
 
 export default Form;

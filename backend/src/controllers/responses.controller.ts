@@ -3,7 +3,7 @@ import ResponseModel from '../models/response.model';
 import Form from '../models/form.model';
 import responseSchema from '../lib/schemas/response.schema';
 import logger from '../utils/logger';
-import { validate as isUUID, v4 as uuid } from 'uuid';
+import { validate as isUUID } from 'uuid';
 
 /**
  * @function createResponse
@@ -28,7 +28,7 @@ export const createResponse = async (req: Request, res: Response) => {
       ...req.body,
     });
 
-    const form = await Form.findOne({ id: formId });
+    const form = await Form.findById(formId);
 
     if (!form) {
       res.status(404).json({ message: 'Form not found.' });
@@ -36,17 +36,16 @@ export const createResponse = async (req: Request, res: Response) => {
     }
 
     const newResponse = new ResponseModel({
-      responseId: uuid(),
       ...response,
     });
 
     await newResponse.save();
+
     res.status(201).json({
       message: 'Response created successfully.',
-      response: newResponse,
     });
   } catch (error) {
-    logger.error(error);
+    logger.error('An error occurred while creating the response: ' + error);
     res.status(500).json({
       message: 'An error occurred while creating the response.',
     });
@@ -76,14 +75,14 @@ export const getResponsesByForm = async (req: Request, res: Response) => {
       return;
     }
 
-    const responses = await ResponseModel.find({ formId })
+    const responses = await ResponseModel.findById(formId)
       .select('-answers')
       .lean()
       .exec();
 
     res.status(200).json(responses);
   } catch (error) {
-    logger.error(error);
+    logger.error('An error occurred while retrieving the responses: ' + error);
     res.status(500).json({
       message: 'An error occurred while retrieving the responses.',
     });
@@ -113,10 +112,7 @@ export const getResponseById = async (req: Request, res: Response) => {
       return;
     }
 
-    const response = await ResponseModel.findOne({
-      formId,
-      responseId,
-    }).lean();
+    const response = await ResponseModel.findById(responseId).lean().exec();
 
     if (!response) {
       res.status(404).json({ message: 'Response not found.' });
@@ -125,7 +121,7 @@ export const getResponseById = async (req: Request, res: Response) => {
 
     res.status(200).json(response);
   } catch (error) {
-    logger.error(error);
+    logger.error('An error occurred while retrieving the response: ' + error);
     res
       .status(500)
       .json({ message: 'An error occurred while retrieving the response.' });

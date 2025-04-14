@@ -11,6 +11,8 @@ function App() {
   const onLogin = useUserStore((state) => state.onLogin);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   const isNotAuthenticated = useUserStore((state) => state.isNotAuthenticated);
+  // FIXME: Limit the data retrieved over the network in the devtools.
+  // note: labeled "users" in network tab.
   const { data, error, isLoading } = useSWR(
     `${envVars.VITE_API_URL}/users`,
     fetcher,

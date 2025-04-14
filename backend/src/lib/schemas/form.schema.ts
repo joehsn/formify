@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 const fieldSchema = z.object({
-  label: z.string().trim().nonempty('Label is required'),
-  type: z.enum([
+  fieldLabel: z.string().trim().nonempty('Label is required'),
+  fieldType: z.enum([
     'text',
     'email',
     'number',
@@ -11,9 +11,9 @@ const fieldSchema = z.object({
     'dropdown',
     'date',
   ]),
-  options: z.array(z.string()).optional(),
-  required: z.boolean().default(false),
-  validations: z
+  fieldOptions: z.array(z.string()).optional(),
+  fieldRequired: z.boolean().default(false),
+  fieldValidations: z
     .object({
       maxLength: z.number().optional(),
       minLength: z.number().optional(),
@@ -23,11 +23,10 @@ const fieldSchema = z.object({
 });
 
 const formSchema = z.object({
-  id: z.string().uuid(),
-  title: z.string().nonempty('Title is required').trim(),
-  description: z.string().trim().optional(),
-  fields: fieldSchema.array().nonempty('At least one field is present'),
-  status: z.enum(['draft', 'published', 'closed']).default('draft'), // Enum for status
+  formTitle: z.string().nonempty('Title is required').trim(),
+  formDesc: z.string().trim().optional(),
+  formFields: fieldSchema.array().nonempty('At least one field is present'),
+  formStatus: z.enum(['draft', 'published', 'closed']).default('draft'), // Enum for status
 });
 
 export type FormType = z.infer<typeof formSchema>;

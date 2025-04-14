@@ -11,19 +11,8 @@
 - [ ] Implement User update and delete functionalities.
 - [ ] Implement Response update and delete functionalities.
 - [ ] Write tests for the api.
-- [ ] Update the form schema to have a `formId` instead of `id` field.
+- [x] Update the form schema to have a `formId` instead of `id` field.
+    > I just override the default `_id`.
 - [x] Update the README.md file to include the new changes.
 - [x] Update the password length in the User schema to be a minimum of 8 characters.
 - [x] Add Rate Limiting to the application.
-
-  ```javascript
-  import rateLimit from "express-rate-limit";
-
-  const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
-    message: "Too many requests from this IP, please try again later.",
-  });
-
-  app.use(limiter);
-  ```

@@ -28,14 +28,16 @@ export default function Home() {
 
   return (
     <>
-      {isAuthenticated ? <AuthenticatedView /> : <UnauthenticatedView />}
+      {isAuthenticated ? <HomeAuthenticatedView /> : <HomeUnauthenticatedView />}
     </>
   );
 }
 
-function AuthenticatedView() {
+function HomeAuthenticatedView() {
   const user = useUserStore((state) => state.user);
   const navigate = useNavigate();
+  // FIXME: Limit the data retrieved over the network in the devtools.
+  // note: labeled "forms" in network tab.
   const { data, error, isLoading } = useSWR(
     `${envVars.VITE_API_URL}/forms`,
     fetcher
@@ -63,10 +65,9 @@ function AuthenticatedView() {
             <div className="grid grid-cols-1 gap-4">
               {forms.map((form) => (
                 <Card
-                  onClick={() => navigate(`/update/${form.id}`)}
                   key={form.id}
                   className={cn(
-                    'cursor-pointer transition-shadow duration-300 hover:shadow-simple'
+                    'transition-shadow duration-300 hover:shadow-simple'
                   )}
                 >
                   <CardContent
@@ -75,9 +76,12 @@ function AuthenticatedView() {
                     )}
                   >
                     <Badge>{form.status}</Badge>
-                    <div className="mb-4 mt-2 w-full flex-1 text-lg font-semibold sm:m-0">
+                    <Link
+                      className="mb-4 mt-2 w-full flex-1 text-lg font-semibold sm:m-0"
+                      to={`/update/${form.id}`}
+                    >
                       {form.title}
-                    </div>
+                    </Link>
                     <div className="flex w-full items-center justify-between sm:w-auto sm:gap-x-4">
                       <div className="text-neutral-400">
                         {format(
@@ -136,7 +140,7 @@ function AuthenticatedView() {
   );
 }
 
-const UnauthenticatedView = () => {
+const HomeUnauthenticatedView = () => {
   const features = [
     {
       title: 'Dynamic Form Builder',

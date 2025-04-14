@@ -24,6 +24,7 @@ import {
   Trash as TrashIcon,
 } from "lucide-react"
 import Option from './Option';
+import DivInput from './DivInput';
 
 const types = [
   'text',
@@ -60,22 +61,11 @@ const CreateFields = forwardRef<HTMLDivElement>((_, ref) => {
           <CardHeader
             className={cn('flex flex-row items-center justify-between gap-4')}
           >
-            <input
-              type="text"
+            <DivInput 
               value={field.label}
+              setValue={(val) => setFieldLabel(field._id, val)}
               aria-label="Field label"
               className="w-full border-b py-1 text-lg font-bold outline-none focus:border-neutral-900"
-              onChange={(e) => setFieldLabel(field._id, e.target.value)}
-              onFocus={(e) => {
-                if (e.target.value === 'Untitled Field') {
-                  setFieldLabel(field._id, '');
-                }
-              }}
-              onBlur={(e) => {
-                if (e.target.value === '') {
-                  setFieldLabel(field._id, 'Untitled Field');
-                }
-              }}
             />
             <Select
               defaultValue={field.type}
@@ -99,13 +89,12 @@ const CreateFields = forwardRef<HTMLDivElement>((_, ref) => {
             <div className="flex flex-col items-start gap-4">
               {['text', 'number', 'email'].includes(field.type) ? (
                 <Input
-                  placeholder={`I.e. ${
-                    field.type === 'text'
-                      ? 'Lorem Ipsum...'
-                      : field.type === 'number'
-                        ? '123456789'
-                        : 'example@domain.com'
-                  }`}
+                  placeholder={`I.e. ${field.type === 'text'
+                    ? 'Lorem Ipsum...'
+                    : field.type === 'number'
+                      ? '123456789'
+                      : 'example@domain.com'
+                    }`}
                   disabled
                 />
               ) : ['radio', 'checkbox', 'dropdown'].includes(field.type) ? (

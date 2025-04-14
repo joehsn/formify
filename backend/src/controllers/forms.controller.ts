@@ -14,14 +14,13 @@ export const createForm = async (req: Request, res: Response) => {
   try {
     const data = formSchema.parse(req.body);
     const form = new Form({ ...data, userId });
-    const savedForm = await form.save();
+    await form.save();
     res.status(201).json({
       message: 'Form created successfully',
-      form: savedForm,
     });
   } catch (error) {
     logger.error('Error creating form: ' + error);
-    res.status(500).json({ message: 'Error creating form', error });
+    res.status(500).json({ message: 'Error creating form' });
   }
 };
 
@@ -64,14 +63,18 @@ export const getForm = async (req: Request, res: Response) => {
       });
       return;
     }
-    const form = await Form.findOne({ id: formId }).lean().exec();
+    const form = await Form.findById(formId).lean().exec();
 
-    if (!form || form.userId.toString() !== String(userId)) {
+    if (
+      !form ||
+      form.userId.toString() !== String(userId) // Not the owner of the form
+    ) {
       res.status(404).json({
         message: 'Form not found',
       });
       return;
     }
+
     res.status(200).json(form);
   } catch (error) {
     logger.error('Error retrieving a form: ' + error);
@@ -95,16 +98,10 @@ export const updateForm = async (req: Request, res: Response) => {
       });
       return;
     }
-    const updatedForm = await Form.findOneAndUpdate(
-      {
-        id: formId,
-      },
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    )
+    const updatedForm = await Form.findByIdAndUpdate(formId, req.body, {
+      new: true,
+      runValidators: true,
+    })
       .lean()
       .exec();
 
@@ -117,7 +114,6 @@ export const updateForm = async (req: Request, res: Response) => {
 
     res.status(200).json({
       message: 'Form updated successfully',
-      form: updatedForm,
     });
   } catch (error) {
     logger.error('Error updating form: ' + error);
@@ -131,7 +127,6 @@ export const updateForm = async (req: Request, res: Response) => {
  * @param res The HTTP response.
  */
 export const deleteForm = async (req: Request, res: Response) => {
-  const userId = req.user !== undefined && 'id' in req.user && req.user.id;
   try {
     const { formId } = req.params;
     if (!isUUID(formId)) {
@@ -140,12 +135,7 @@ export const deleteForm = async (req: Request, res: Response) => {
       });
       return;
     }
-    const deletedForm = await Form.findOneAndDelete({
-      id: formId,
-      userId,
-    })
-      .lean()
-      .exec();
+    const deletedForm = await Form.findByIdAndDelete(formId).lean().exec();
     if (!deletedForm) {
       res.status(404).json({
         message: 'Form does not exist',

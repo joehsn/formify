@@ -18,6 +18,7 @@ import { FormType } from '@/types';
 import { handleSaveForm } from '@/lib/handlers';
 import Login from './login';
 import { validate as isUUID } from 'uuid';
+import DivInput from "@/components/DivInput"
 
 function Create() {
   const { formId } = useParams();
@@ -43,30 +44,17 @@ function Create() {
     <div className="relative mx-auto w-full max-w-screen-md space-y-6 px-4 py-8">
       <Card className="z-10 border-t-8">
         <CardHeader>
-          <input
-            type="text"
-            className="border-b py-2 text-2xl font-bold outline-none focus:border-neutral-900"
+          <DivInput
             value={form.title}
-            onChange={(e) => setFormTitle(e.target.value)}
-            onFocus={(e) => {
-              if (e.target.value === 'Untitled Form') {
-                setFormTitle('');
-              }
-            }}
-            onBlur={(e) => {
-              if (e.target.value === '') {
-                setFormTitle('Untitled Form');
-              }
-            }}
+            setValue={setFormTitle}
             aria-label="Form title"
+            className="border-b py-2 text-2xl font-bold outline-none focus:border-neutral-900"
           />
-          <input
-            type="text"
-            className="border-b py-2 text-lg font-normal outline-none focus:border-neutral-900"
-            value={form.description}
-            onChange={(e) => setFormDescription(e.target.value)}
-            placeholder="Form description"
+          <DivInput
+            value={form.description ?? ""}
+            setValue={setFormDescription}
             aria-label="Form description"
+            className="border-b py-2 h-32 overflow-y-auto text-lg font-normal outline-none focus:border-neutral-900"
           />
         </CardHeader>
         <CardFooter className={cn('space-x-4')}>

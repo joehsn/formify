@@ -1,11 +1,10 @@
-import mongoose from 'mongoose';
+import mongoose, { InferSchemaType } from 'mongoose';
 
 const responseSchema = new mongoose.Schema(
   {
-    responseId: {
+    _id: {
       type: mongoose.Schema.Types.UUID,
-      unique: true,
-      required: true,
+      default: () => new mongoose.Types.UUID(),
     },
     formId: {
       type: mongoose.Schema.Types.UUID,
@@ -26,4 +25,7 @@ const responseSchema = new mongoose.Schema(
 );
 
 const Response = mongoose.model('Response', responseSchema);
+
+export type IResponse = InferSchemaType<typeof responseSchema>;
+
 export default Response;
