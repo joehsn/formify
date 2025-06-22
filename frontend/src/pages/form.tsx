@@ -37,7 +37,7 @@ import FAB from '@/components/FAB';
 import Loader from '@/components/Loader';
 import Error from '@/components/Error';
 
-function UpdatePage() {
+function FormPage() {
   const ref = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -80,13 +80,13 @@ function UpdatePage() {
 }
 
 function UpdateForm({ formId }: { formId: string }) {
-  const { data, error, isLoading } = useSWR<
-    FormType & {
-      id: string;
+  const { data, error, isLoading } = useSWR(
+    `${envVars.VITE_API_URL}/forms/${formId}`,
+    fetcher,
+    {
+      revalidateOnFocus: false,
     }
-  >(`${envVars.VITE_API_URL}/forms/${formId}`, fetcher, {
-    revalidateOnFocus: false,
-  });
+  );
 
   const form = useUpdateFormStore((state) => state.form);
   const setForm = useUpdateFormStore((state) => state.setForm);
@@ -121,7 +121,7 @@ function UpdateForm({ formId }: { formId: string }) {
           <input
             type="text"
             className="border-b py-2 text-2xl font-bold outline-none focus:border-neutral-900"
-            value={form.title}
+            value={form.formTitle}
             onChange={(e) => setFormTitle(e.target.value)}
             onFocus={(e) => {
               if (e.target.value === 'Untitled Form') {
@@ -136,8 +136,8 @@ function UpdateForm({ formId }: { formId: string }) {
             aria-label="Form title"
           />
           <textarea
-            className="h-fit resize-none border-b py-2 text-lg font-normal outline-none focus:border-neutral-900"
-            value={form.description}
+            className="h-40 resize-none border-b py-2 text-lg font-normal outline-none focus:border-neutral-900"
+            value={form.formDesc}
             onChange={(e) => setFormDescription(e.target.value)}
             placeholder="Form description"
             aria-label="Form description"
@@ -153,8 +153,8 @@ function UpdateForm({ formId }: { formId: string }) {
             <span>Update Form</span>
           </Button>
           <Select
-            defaultValue={form.status}
-            onValueChange={(newStatus: FormType['status']) =>
+            defaultValue={form.formStatus}
+            onValueChange={(newStatus: FormType['formStatus']) =>
               setFormStatus(newStatus)
             }
           >
@@ -212,16 +212,16 @@ function Fields() {
     if (lastFieldRef.current) {
       lastFieldRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [form?.fields.length]);
+  }, [form?.formFields.length]);
 
   return (
     <>
-      {form?.fields.map((field) => (
+      {form?.formFields.map((field) => (
         <Card
           aria-label="Field"
           key={field._id}
           ref={
-            form.fields[form.fields.length - 1]._id === field._id
+            form.formFields[form.formFields.length - 1]._id === field._id
               ? lastFieldRef
               : undefined
           }
@@ -231,7 +231,7 @@ function Fields() {
           >
             <input
               type="text"
-              value={field.label}
+              value={field.fieldLabel}
               aria-label="Field label"
               className="w-full border-b py-1 text-lg font-bold outline-none focus:border-neutral-900"
               onChange={(e) => {
@@ -249,8 +249,8 @@ function Fields() {
               }}
             />
             <Select
-              defaultValue={field.type}
-              onValueChange={(newType: FieldType['type']) => {
+              defaultValue={field.fieldType}
+              onValueChange={(newType: FieldType['fieldType']) => {
                 setFieldType(field._id, newType);
               }}
             >
@@ -268,28 +268,32 @@ function Fields() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-col items-start gap-4">
-              {['text', 'number', 'email'].includes(field.type) ? (
+              {['text', 'number', 'email'].includes(field.fieldType) ? (
                 <Input
                   placeholder={`I.e. ${
-                    field.type === 'text'
+                    field.fieldType === 'text'
                       ? 'Lorem Ipsum...'
-                      : field.type === 'number'
+                      : field.fieldType === 'number'
                         ? '123456789'
                         : 'example@domain.com'
                   }`}
                   disabled
                 />
-              ) : ['radio', 'checkbox', 'dropdown'].includes(field.type) ? (
+              ) : ['radio', 'checkbox', 'dropdown'].includes(
+                  field.fieldType
+                ) ? (
                 <>
-                  {field.options?.map((option, index) => (
+                  {field.fieldOptions?.map((option, index) => (
                     <Option
                       key={index}
                       option={option}
                       index={index}
                       fieldType={
-                        field.type as 'radio' | 'checkbox' | 'dropdown'
+                        field.fieldType as 'radio' | 'checkbox' | 'dropdown'
                       }
-                      optionsLength={field.options ? field.options.length : 2}
+                      optionsLength={
+                        field.fieldOptions ? field.fieldOptions.length : 2
+                      }
                       onOptionChange={(newOption) => {
                         setFieldOption(field._id, index, newOption);
                       }}
@@ -316,7 +320,7 @@ function Fields() {
             <div className="flex items-center space-x-2">
               <Switch
                 id={field._id + '-required-switch'}
-                checked={field.required}
+                checked={field.fieldRequired}
                 onCheckedChange={(checked) => {
                   setFieldRequired(field._id, checked);
                 }}
@@ -326,7 +330,7 @@ function Fields() {
             <div>
               <Button
                 variant="destructive"
-                disabled={form.fields.length === 1}
+                disabled={form.formFields.length === 1}
                 onClick={() => {
                   removeField(field._id);
                 }}
@@ -342,4 +346,4 @@ function Fields() {
   );
 }
 
-export default UpdatePage;
+export default FormPage;

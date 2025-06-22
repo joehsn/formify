@@ -86,23 +86,23 @@ export const generateSchema = (fields: FieldType[]) => {
    */
   const createStringSchema = (field: FieldType) => {
     let str = z.string();
-    if (field.required) {
-      str = str.nonempty(`${field.label} is required`);
+    if (field.fieldRequired) {
+      str = str.nonempty(`${field.fieldLabel} is required`);
     }
     return str;
   };
 
   fields.forEach((field) => {
-    const { type, _id, options, required, validations } = field;
+    const { fieldType, _id, fieldOptions, fieldRequired, fieldValidations } = field;
 
-    switch (type) {
+    switch (fieldType) {
       case 'radio':
       case 'dropdown':
-        schemaObject[_id] = createEnum(options);
+        schemaObject[_id] = createEnum(fieldOptions);
         break;
 
       case 'checkbox':
-        schemaObject[_id] = createEnum(options).array().min(1);
+        schemaObject[_id] = createEnum(fieldOptions).array().min(1);
         break;
 
       case 'date':
@@ -121,21 +121,21 @@ export const generateSchema = (fields: FieldType[]) => {
 
       case 'text': {
         let textSchema = createStringSchema(field);
-        if (validations?.minLength) {
+        if (fieldValidations?.minLength) {
           textSchema = textSchema.min(
-            validations.minLength,
-            `Minimum ${validations.minLength} characters required`
+            fieldValidations.minLength,
+            `Minimum ${fieldValidations.minLength} characters required`
           );
         }
-        if (validations?.maxLength) {
+        if (fieldValidations?.maxLength) {
           textSchema = textSchema.max(
-            validations.maxLength,
-            `Maximum ${validations.maxLength} characters allowed`
+            fieldValidations.maxLength,
+            `Maximum ${fieldValidations.maxLength} characters allowed`
           );
         }
-        if (validations?.pattern) {
+        if (fieldValidations?.pattern) {
           textSchema = textSchema.regex(
-            new RegExp(validations.pattern),
+            new RegExp(fieldValidations.pattern),
             'Invalid format'
           );
         }
@@ -145,36 +145,10 @@ export const generateSchema = (fields: FieldType[]) => {
       default:
         schemaObject[_id] = z.any();
     }
-    if (!required) {
+    if (!fieldRequired) {
       schemaObject[_id] = schemaObject[_id].optional();
     }
   });
 
   return z.object(schemaObject);
-};
-
-/**
- * A utility function to generate an object ID.
- * @returns The generated object ID.
- */
-export const generateObjectId = () => {
-  const timestamp = Math.floor(new Date().getTime() / 1000).toString(16);
-  const randomPart = 'xxxxxxxxxxxxxxxx'.replace(/x/g, () =>
-    Math.floor(Math.random() * 16).toString(16)
-  );
-  return timestamp + randomPart;
-};
-
-/**
- * A utility function to generate a default field.
- * @returns The generated default field.
- */
-export const defaultField = async (): Promise<FieldType> => {
-  const _id = generateObjectId();
-  return {
-    _id,
-    label: 'Untitled Field',
-    type: 'text',
-    required: false,
-  };
 };

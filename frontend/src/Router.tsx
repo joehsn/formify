@@ -10,9 +10,8 @@ function Router() {
           {/* Home route */}
           <Route index element={<Page.Home />} />
           {/* Form routes */}
-          <Route path="/form/:formId" element={<Page.DisplayPage />} />
-          <Route path="/create/:formId" element={<Page.CreatePage />} />
-          <Route path="/update/:formId" element={<Page.UpdatePage />} />
+          <Route path="/form/:formId" element={<Page.FormPage />} />
+          <Route path="/display/:formId" element={<Page.DisplayPage />} />
           {/* Responses routes */}
           <Route path="/responses/:formId" element={<Page.ResponsesPage />} />
           <Route

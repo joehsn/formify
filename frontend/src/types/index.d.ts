@@ -6,18 +6,18 @@ export interface User {
 
 export interface FieldType {
   _id: string;
-  label: string;
-  type:
-    | 'text'
-    | 'email'
-    | 'number'
-    | 'radio'
-    | 'checkbox'
-    | 'dropdown'
-    | 'date';
-  options?: string[];
-  required: boolean;
-  validations?: {
+  fieldLabel: string;
+  fieldType:
+  | 'text'
+  | 'email'
+  | 'number'
+  | 'radio'
+  | 'checkbox'
+  | 'dropdown'
+  | 'date';
+  fieldOptions?: string[];
+  fieldRequired: boolean;
+  fieldValidations?: {
     maxLength?: number;
     minLength?: number;
     pattern?: string;
@@ -25,12 +25,11 @@ export interface FieldType {
 }
 
 export interface FormType {
-  _id?: string;
-  id?: string;
-  title: string;
-  description?: string;
-  fields: FieldType[];
-  status: 'draft' | 'published' | 'closed';
+  _id: string;
+  formTitle: string;
+  formDesc: string;
+  formFields: FieldType[];
+  formStatus: 'draft' | 'published' | 'closed';
   createdAt?: string;
   updatedAt?: string;
 }

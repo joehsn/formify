@@ -14,12 +14,12 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import { FormType } from '@/types';
 
 interface Props {
-  id: string;
+  _id: string;
   title: string;
   setForms: Dispatch<SetStateAction<FormType[]>>;
 }
 
-function DeleteDailog({ id, title, setForms }: Props) {
+function DeleteDailog({ _id, title, setForms }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -40,10 +40,13 @@ function DeleteDailog({ id, title, setForms }: Props) {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
+          <Button onClick={() => setIsOpen(false)} variant="outline">
+            Cancel
+          </Button>
           <Button
             onClick={() => {
-              handleDeleteForm(id);
-              setForms((prev) => prev.filter((form) => form.id !== id));
+              handleDeleteForm(_id);
+              setForms((prev) => prev.filter((form) => form._id !== _id));
               setIsOpen(false);
             }}
             variant="destructive"

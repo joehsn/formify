@@ -1,30 +1,22 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { FieldType, FormType } from '@/types';
-import { defaultField } from '@/lib/utils';
-
-interface State {
-  form:
-    | (FormType & {
-        id: string;
-      })
-    | null;
-}
+import { v4 as uuidv4 } from "uuid"
 
 interface Actions {
-  setForm: (form: State['form']) => void;
+  setForm: (form: FormType) => void;
   setFormTitle: (title: string) => void;
   setFormDescription: (description: string) => void;
-  setFormStatus: (status: 'draft' | 'published' | 'closed') => void;
-  setFields: (fields: FormType['fields']) => void;
+  setFormStatus: (status: FormType["formStatus"]) => void;
+  setFields: (fields: FormType['formFields']) => void;
   // For a fields
   setFieldLabel: (_id: string, label: string) => void;
   setFieldRequired: (_id: string, required: boolean) => void;
-  setFieldType: (_id: string, type: FieldType['type']) => void;
-  setFieldOptions: (_id: string, options: FieldType['options']) => void;
+  setFieldType: (_id: string, type: FieldType['fieldType']) => void;
+  setFieldOptions: (_id: string, options: FieldType['fieldOptions']) => void;
   setFieldValidations: (
     _id: string,
-    validations: FieldType['validations']
+    validations: FieldType['fieldValidations']
   ) => void;
   addFormField: () => void;
   removeFormField: (_id: string) => void;
@@ -36,7 +28,7 @@ interface Actions {
 
 const initialForm = JSON.parse(localStorage.getItem('form') || 'null');
 
-const useUpdateFormStore = create<State & Actions>()(
+const useUpdateFormStore = create<{ form: FormType } & Actions>()(
   immer((set) => ({
     form: initialForm,
     setForm: (form) => {
@@ -49,7 +41,7 @@ const useUpdateFormStore = create<State & Actions>()(
         if (!state.form) {
           return;
         }
-        state.form.title = title;
+        state.form.formTitle = title;
       });
     },
     setFormDescription: (description) => {
@@ -57,7 +49,7 @@ const useUpdateFormStore = create<State & Actions>()(
         if (!state.form) {
           return;
         }
-        state.form.description = description;
+        state.form.formDesc = description;
       });
     },
     setFields: (fields) => {
@@ -65,7 +57,7 @@ const useUpdateFormStore = create<State & Actions>()(
         if (!state.form) {
           return;
         }
-        state.form.fields = fields;
+        state.form.formFields = fields;
       });
     },
     setFieldLabel: (_id, label) => {
@@ -73,8 +65,8 @@ const useUpdateFormStore = create<State & Actions>()(
         if (!state.form) {
           return;
         }
-        const index = state.form.fields.findIndex((f) => f._id === _id);
-        state.form.fields[index].label = label;
+        const index = state.form.formFields.findIndex((f) => f._id === _id);
+        state.form.formFields[index].fieldLabel = label;
       });
     },
     setFieldRequired: (_id, required) => {
@@ -82,8 +74,8 @@ const useUpdateFormStore = create<State & Actions>()(
         if (!state.form) {
           return;
         }
-        const index = state.form.fields.findIndex((f) => f._id === _id);
-        state.form.fields[index].required = required;
+        const index = state.form.formFields.findIndex((f) => f._id === _id);
+        state.form.formFields[index].fieldRequired = required;
       });
     },
     setFieldType: (_id, type) => {
@@ -91,13 +83,13 @@ const useUpdateFormStore = create<State & Actions>()(
         if (!state.form) {
           return;
         }
-        const index = state.form.fields.findIndex((f) => f._id === _id);
-        state.form.fields[index].type = type;
+        const index = state.form.formFields.findIndex((f) => f._id === _id);
+        state.form.formFields[index].fieldType = type;
         if (['radio', 'checkbox', 'dropdown'].includes(type)) {
-          state.form.fields[index].options = state.form.fields[index]
-            .options || ['', ''];
+          state.form.formFields[index].fieldOptions = state.form.formFields[index]
+            .fieldOptions || ['', ''];
         } else {
-          state.form.fields[index].options = [];
+          state.form.formFields[index].fieldOptions = [];
         }
       });
     },
@@ -106,8 +98,8 @@ const useUpdateFormStore = create<State & Actions>()(
         if (!state.form) {
           return;
         }
-        const index = state.form.fields.findIndex((f) => f._id === _id);
-        state.form.fields[index].options = options;
+        const index = state.form.formFields.findIndex((f) => f._id === _id);
+        state.form.formFields[index].fieldOptions = options;
       });
     },
     setFieldValidations: (_id, validations) => {
@@ -115,17 +107,21 @@ const useUpdateFormStore = create<State & Actions>()(
         if (!state.form) {
           return;
         }
-        const index = state.form.fields.findIndex((f) => f._id === _id);
-        state.form.fields[index].validations = validations;
+        const index = state.form.formFields.findIndex((f) => f._id === _id);
+        state.form.formFields[index].fieldValidations = validations;
       });
     },
-    addFormField: async () => {
-      const field = await defaultField();
+    addFormField: () => {
       set((state) => {
         if (!state.form) {
           return;
         }
-        state.form.fields.push(field);
+        state.form.formFields.push({
+          _id: uuidv4(),
+          fieldLabel: 'Untitled Field',
+          fieldType: 'text',
+          fieldRequired: false,
+        });
       });
     },
     removeFormField: (_id) => {
@@ -133,7 +129,7 @@ const useUpdateFormStore = create<State & Actions>()(
         if (!state.form) {
           return;
         }
-        state.form.fields = state.form.fields.filter((f) => f._id !== _id);
+        state.form.formFields = state.form.formFields.filter((f) => f._id !== _id);
       });
     },
     setFormStatus: (status) => {
@@ -141,7 +137,7 @@ const useUpdateFormStore = create<State & Actions>()(
         if (!state.form) {
           return;
         }
-        state.form.status = status;
+        state.form.formStatus = status;
       });
     },
     setFieldOption: (_id, index, value) => {
@@ -149,9 +145,9 @@ const useUpdateFormStore = create<State & Actions>()(
         if (!state.form) {
           return;
         }
-        const field = state.form.fields.find((f) => f._id === _id);
-        if (field?.options) {
-          field.options[index] = value;
+        const field = state.form.formFields.find((f) => f._id === _id);
+        if (field?.fieldOptions) {
+          field.fieldOptions[index] = value;
         }
       });
     },
@@ -160,9 +156,9 @@ const useUpdateFormStore = create<State & Actions>()(
         if (!state.form) {
           return;
         }
-        const field = state.form.fields.find((f) => f._id === _id);
+        const field = state.form.formFields.find((f) => f._id === _id);
         if (field) {
-          field.options?.push('');
+          field.fieldOptions?.push('');
         }
       });
     },
@@ -171,9 +167,9 @@ const useUpdateFormStore = create<State & Actions>()(
         if (!state.form) {
           return;
         }
-        const field = state.form.fields.find((f) => f._id === _id);
+        const field = state.form.formFields.find((f) => f._id === _id);
         if (field) {
-          field.options?.splice(index, 1);
+          field.fieldOptions?.splice(index, 1);
         }
       });
     },
@@ -181,7 +177,7 @@ const useUpdateFormStore = create<State & Actions>()(
 );
 
 useUpdateFormStore.subscribe((state) => {
-  document.title = `${state.form?.title} - Formify`;
+  document.title = `${state.form?.formTitle} - Formify`;
 });
 
 export default useUpdateFormStore;

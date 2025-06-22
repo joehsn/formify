@@ -34,6 +34,26 @@ export const handleLogOut = async (onLogout: () => void) => {
   }
 };
 
+export const handleCreateForm = async (callback: (formId: string) => void) => {
+  try {
+    const req = await axios.post(`${envVars.VITE_API_URL}/forms/`, null, { withCredentials: true });
+    callback(req.data.formId)
+    toast({
+      title: 'Form created',
+      description: 'Your form has been created successfully',
+      duration: 5000,
+    });
+  } catch (error) {
+    console.error("Error creating form:", error);
+    toast({
+      title: 'Error creating form',
+      description: 'An error occurred while creating the form',
+      duration: 5000,
+      variant: 'destructive',
+    });
+  }
+}
+
 /**
  * A utility function to save the form.
  * @param formId - The ID of the form.
@@ -101,12 +121,10 @@ export const handleDeleteForm = async (formId: string) => {
  * @param form - The form data.
  */
 export const handleUpdateForm = async (
-  form: FormType & {
-    id: string;
-  }
+  form: FormType
 ) => {
-  const formId = z.string().uuid().parse(form.id);
   try {
+    const formId = z.string().uuid().parse(form._id);
     const response = await axios.put(
       `${envVars.VITE_API_URL}/forms/${formId}`,
       {
