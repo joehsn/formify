@@ -1,10 +1,15 @@
 import mongoose, { InferSchemaType } from 'mongoose';
 
 const fieldSchema = new mongoose.Schema({
+  _id: {
+    type: mongoose.Schema.Types.UUID,
+    default: () => new mongoose.Types.UUID(),
+  },
   fieldLabel: {
     type: String,
     required: true,
     maxLength: 255,
+    default: "Untitled Field",
   },
   fieldType: {
     type: String,
@@ -21,6 +26,7 @@ const fieldSchema = new mongoose.Schema({
       'rating',
     ],
     required: true,
+    default: "text",
   },
   fieldOptions: [String],
   fieldRequired: {
@@ -51,19 +57,27 @@ const formSchema = new mongoose.Schema(
       required: true,
       trim: true,
       maxLength: 255,
+      default: "Untitled Form"
     },
     formDesc: {
       type: String,
       trim: true,
       default: '',
-      maxLength: 1020,
+      maxLength: 1024,
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
-    formFields: [fieldSchema],
+    formFields: {
+      type: [fieldSchema],
+      default: [{
+        fieldLabel: "Untitled Field",
+        fieldType: "text",
+        fieldRequired: true,
+      }]
+    },
     formStatus: {
       type: String,
       enum: ['draft', 'published', 'closed'],

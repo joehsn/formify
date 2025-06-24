@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import Form from '../models/form.model';
 import logger from '../utils/logger';
 import { validate as isUUID } from 'uuid';
-import formSchema from '../lib/schemas/form.schema';
 
 /**
  * @brief Create a new form.
@@ -10,13 +9,13 @@ import formSchema from '../lib/schemas/form.schema';
  * @param res The HTTP response.
  */
 export const createForm = async (req: Request, res: Response) => {
-  const userId = req.user !== undefined && 'id' in req.user && req.user.id; // I did this extra checking because of Typescript but `id` for sure exists on the `req.user` because this route is protected
+  const userId = req.user?.id; // I did this extra checking because of Typescript but `id` for sure exists on the `req.user` because this route is protected
   try {
-    const data = formSchema.parse(req.body);
-    const form = new Form({ ...data, userId });
+    const form = new Form({ userId });
     await form.save();
     res.status(201).json({
       message: 'Form created successfully',
+      formId: form._id,
     });
   } catch (error) {
     logger.error('Error creating form: ' + error);
@@ -30,8 +29,9 @@ export const createForm = async (req: Request, res: Response) => {
  * @param res The HTTP response.
  */
 export const getAllFormsByUser = async (req: Request, res: Response) => {
-  const userId = req.user !== undefined && 'id' in req.user && req.user.id;
+  const userId = req.user?.id;
   try {
+    // NOTE: turn it into pagination
     const forms = await Form.find({
       userId,
     })
@@ -54,7 +54,7 @@ export const getAllFormsByUser = async (req: Request, res: Response) => {
  * @param res The HTTP response.
  */
 export const getForm = async (req: Request, res: Response) => {
-  const userId = req.user !== undefined && 'id' in req.user && req.user.id;
+  const userId = req.user?.id;
   try {
     const { formId } = req.params;
     if (!isUUID(formId)) {
@@ -63,7 +63,7 @@ export const getForm = async (req: Request, res: Response) => {
       });
       return;
     }
-    const form = await Form.findById(formId).lean().exec();
+    const form = await Form.findById(formId).select("-__v").lean().exec();
 
     if (
       !form ||

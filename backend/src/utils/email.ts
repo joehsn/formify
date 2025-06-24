@@ -8,7 +8,7 @@ import logger from './logger';
 
 dotenv.config();
 
-const envars = z
+const envVars = z
   .object({
     SMTP_HOST: z.string(),
     SMTP_PORT: z.string(),
@@ -20,17 +20,17 @@ const envars = z
   })
   .safeParse(process.env);
 
-if (!envars.success) {
+if (!envVars.success) {
   throw new Error("Couldn't parse environment variables");
 }
 
 const transporter = nodemailer.createTransport({
   auth: {
-    user: envars.data.SMTP_USERNAME,
-    pass: envars.data.SMTP_PASSWORD,
+    user: envVars.data.SMTP_USERNAME,
+    pass: envVars.data.SMTP_PASSWORD,
   },
-  host: envars.data.SMTP_HOST,
-  port: Number(envars.data.SMTP_PORT),
+  host: envVars.data.SMTP_HOST,
+  port: Number(envVars.data.SMTP_PORT),
   secure: false,
 } as nodemailer.TransportOptions);
 
@@ -46,7 +46,7 @@ const emailWorker = new Worker(
       }
     );
     await transporter.sendMail({
-      from: envars.data.USER_EMAIL,
+      from: envVars.data.USER_EMAIL,
       to: email,
       subject: 'Password Reset',
       html: emailTemplate,
@@ -55,8 +55,8 @@ const emailWorker = new Worker(
   },
   {
     connection: {
-      host: envars.data.REDIS_HOST,
-      port: Number(envars.data.REDIS_PORT),
+      host: envVars.data.REDIS_HOST,
+      port: Number(envVars.data.REDIS_PORT),
     },
   }
 );
