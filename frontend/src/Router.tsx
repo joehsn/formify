@@ -11,7 +11,7 @@ function Router() {
           <Route index element={<Page.Home />} />
           {/* Form routes */}
           <Route path="/form/:formId" element={<Page.FormPage />} />
-          <Route path="/display/:formId" element={<Page.DisplayPage />} />
+          <Route path="/preview/:formId" element={<Page.PreviewPage />} />
           {/* Responses routes */}
           <Route path="/responses/:formId" element={<Page.ResponsesPage />} />
           <Route

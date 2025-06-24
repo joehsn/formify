@@ -11,10 +11,10 @@ function useDefaultValues(fields: FieldType[]) {
     const defaultValues: Record<string, string | string[] | undefined> = {};
 
     fields.forEach((field) => {
-      if (field.type === 'checkbox') {
+      if (field.fieldType === 'checkbox') {
         defaultValues[field._id] = [];
       } else {
-        defaultValues[field._id] = field.type === 'radio' ? undefined : '';
+        defaultValues[field._id] = field.fieldType === 'radio' ? undefined : '';
       }
     });
 

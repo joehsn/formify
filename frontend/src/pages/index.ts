@@ -2,7 +2,7 @@ export { default as Home } from './home';
 export { default as Login } from './login';
 export { default as Register } from './register';
 export { default as PageNotFound } from './A404';
-export { default as DisplayPage } from './display';
+export { default as PreviewPage } from './preview';
 export { default as Account } from './account';
 export { default as ResponsesPage } from './responses';
 export { default as ResponsePage } from './response';
