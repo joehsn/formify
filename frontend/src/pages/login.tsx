@@ -24,8 +24,7 @@ import { useState } from 'react';
 import { Eye as EyeIcon, EyeOff as EyeOffIcon } from 'lucide-react';
 import { envVars } from '@/lib/utils';
 import axios from 'axios';
-import { toast } from '@/hooks/use-toast';
-import { ToastAction } from '@/components/ui/toast';
+import { toast } from 'sonner';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -52,35 +51,24 @@ export default function Login() {
           withCredentials: true,
         }
       );
-      toast({
-        description: response.data.message,
-        duration: 5000,
-      });
+      toast(response.data.message);
       onLogin(response.data.user);
       navigate('/');
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        toast({
-          description: error.response?.data?.message || 'An error occurred',
-          duration: 5000,
-          variant: 'destructive',
-          action:
-            error.response?.status === 401 ? (
-              <ToastAction
-                onClick={() => navigate('/register')}
-                altText="Register"
-              >
-                Register
-              </ToastAction>
-            ) : undefined,
-        });
+        if (error.response?.status === 401) {
+          toast(error.response?.data?.message || 'An error occurred', {
+            action: {
+              label: 'Register',
+              onClick: () => navigate('/register'),
+            },
+          });
+        } else {
+          toast("An error occurred while logging in")
+        }
       } else {
         console.error(error);
-        toast({
-          description: 'An error occurred while logging in',
-          duration: 5000,
-          variant: 'destructive',
-        });
+        toast('An error occurred while logging in');
       }
     }
   };
@@ -175,13 +163,21 @@ export default function Login() {
                       </FormItem>
                     )}
                   />
-                  <Button variant="link" type="button" onClick={() => {
-                    const email = loginSchema.shape.email.safeParse(form.getValues("email"))
-                    if (email.success)
-                      navigate("/forgot-password?email=" + encodeURIComponent(email.data));
-                    else
-                      navigate("/forgot-password");
-                  }}>
+                  <Button
+                    variant="link"
+                    type="button"
+                    onClick={() => {
+                      const email = loginSchema.shape.email.safeParse(
+                        form.getValues('email')
+                      );
+                      if (email.success)
+                        navigate(
+                          '/forgot-password?email=' +
+                            encodeURIComponent(email.data)
+                        );
+                      else navigate('/forgot-password');
+                    }}
+                  >
                     Forgot password?
                   </Button>
                 </CardContent>

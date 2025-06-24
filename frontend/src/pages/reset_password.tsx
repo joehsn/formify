@@ -1,63 +1,76 @@
-import Logo from "@/components/logo";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { toast } from "@/hooks/use-toast";
-import { envVars } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { z } from "zod";
+import Logo from '@/components/logo';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from '@/components/ui/card';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
+import { envVars } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { z } from 'zod';
 
-const passwordSchema = z.object({
-  password: z.string().min(8),
-  confirmPassword: z.string(),
-}).refine(data => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"]
-});
+const passwordSchema = z
+  .object({
+    password: z.string().min(8),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
 
 function ResetPassword() {
   const navigate = useNavigate();
   const [status, setStatus] = useState<null | number>(null);
   const [searchParams] = useSearchParams();
-  const token = searchParams.get("token");
+  const token = searchParams.get('token');
   const form = useForm({
     defaultValues: {
-      password: "",
-      confirmPassword: "",
+      password: '',
+      confirmPassword: '',
     },
     resolver: zodResolver(passwordSchema),
   });
 
   useEffect(() => {
     if (!token) {
-      navigate("/");
+      navigate('/');
     }
   }, [navigate, token]);
 
   const onSubmit = async (data: z.infer<typeof passwordSchema>) => {
     try {
-      const res = await axios.post(`${envVars.VITE_API_URL}/users/change-password/`, {
-        token,
-        newPassword: data.password
-      });
-      toast({
-        title: res.data.message
-      });
-      setStatus(200)
+      const res = await axios.post(
+        `${envVars.VITE_API_URL}/users/change-password/`,
+        {
+          token,
+          newPassword: data.password,
+        }
+      );
+      toast(res.data.message);
+      setStatus(200);
       form.reset();
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setStatus(error.response?.status ?? 400)
+        setStatus(error.response?.status ?? 400);
         return;
       }
-      toast({
-        title: "An error occurred"
-      });
+      toast('An error occurred while resetting your password');
       console.error(error);
     }
   };
@@ -70,12 +83,8 @@ function ResetPassword() {
       ) : (
         <Card className="mx-auto w-full max-w-[350px]">
           <CardHeader>
-            <div className="text-2xl font-semibold">
-              Reset your password
-            </div>
-            <p className="text-slate-500">
-              Enter your new password below
-            </p>
+            <div className="text-2xl font-semibold">Reset your password</div>
+            <p className="text-slate-500">Enter your new password below</p>
           </CardHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -87,10 +96,7 @@ function ResetPassword() {
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          {...field}
-                        />
+                        <Input type="password" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -103,10 +109,7 @@ function ResetPassword() {
                     <FormItem>
                       <FormLabel>Confirm Password</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          {...field}
-                        />
+                        <Input type="password" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -158,15 +161,16 @@ const Response = ({ status: status }: { status: number }) => {
     <Card className="mx-auto w-full max-w-[350px]">
       <CardHeader>
         <div className="text-2xl font-semibold">
-          {status == 200 ? "Password changed successfully" : status === 400 ? "Invalid token" : "An error occurred"}
+          {status == 200
+            ? 'Password changed successfully'
+            : status === 400
+              ? 'Invalid token'
+              : 'An error occurred'}
         </div>
-        <p>
-          You will be redirected to the home page in {count} seconds
-        </p>
+        <p>You will be redirected to the home page in {count} seconds</p>
       </CardHeader>
     </Card>
   );
 };
 
 export default ResetPassword;
-

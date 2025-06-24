@@ -26,8 +26,7 @@ import { Eye as EyeIcon, EyeOff as EyeOffIcon } from 'lucide-react';
 import { useState } from 'react';
 import axios from 'axios';
 import { envVars } from '@/lib/utils';
-import { toast } from '@/hooks/use-toast';
-import { ToastAction } from '@/components/ui/toast';
+import { toast } from 'sonner';
 
 /**
  * TODOS:
@@ -65,33 +64,21 @@ export default function Register() {
           withCredentials: true,
         }
       );
-      toast({
-        title: 'Account created',
-        description: response.data.message,
-        duration: 5000,
-      });
+      toast(response.data.message);
       navigate('/login');
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        toast({
-          title: error.response?.statusText || 'Error',
-          description: error.response?.data?.message || 'An error occurred',
-          duration: 5000,
-          variant: 'destructive',
-          action:
-            error.status === 409 ? (
-              <ToastAction altText="Login" onClick={() => navigate('/login')}>
-                Login
-              </ToastAction>
-            ) : undefined,
-        });
+        if (error.status === 409) {
+          toast(error.response?.statusText || 'Error', {
+            description: error.response?.data?.message || 'An error occurred',
+            action: {
+              label: 'Login',
+              onClick: () => navigate('/login'),
+            },
+          });
+        }
       } else {
-        toast({
-          title: 'Error',
-          description: 'An error occurred while creating your account',
-          duration: 5000,
-          variant: 'destructive',
-        });
+        toast('An error occurred while creating your account');
       }
     }
   };
@@ -194,9 +181,7 @@ export default function Register() {
                                 type="button"
                                 variant="ghost"
                                 className="absolute right-0 top-1/2 -translate-y-1/2 transform"
-                                onClick={() =>
-                                  setIsVisible((prev) => !prev)
-                                }
+                                onClick={() => setIsVisible((prev) => !prev)}
                                 aria-label="Toggle password visibility"
                               >
                                 {isVisible ? (

@@ -21,20 +21,20 @@ import {
 import useUserStore from '@/lib/stores/user.store';
 import { useEffect } from 'react';
 import { z } from 'zod';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { cn, envVars } from '@/lib/utils';
 import axios from 'axios';
 
 const emailSchema = z.object({
-  email: z.string().nonempty("Email is required").email()
-})
+  email: z.string().nonempty('Email is required').email(),
+});
 
 function ForgotPassword() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
 
-  const email = decodeURIComponent(searchParams.get("email") ?? "")
+  const email = decodeURIComponent(searchParams.get('email') ?? '');
   const form = useForm({
     defaultValues: {
       email: email,
@@ -46,19 +46,16 @@ function ForgotPassword() {
     try {
       axios.post(`${envVars.VITE_API_URL}/users/forgot-password/`, data);
     } catch (error) {
-      toast({
-        title: "An error occured"
-      })
-      console.error(error)
+      toast('An error occured');
+      console.error(error);
     }
   };
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/")
+      navigate('/');
     }
-
-  }, [isAuthenticated, navigate])
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="py-24">
@@ -67,10 +64,10 @@ function ForgotPassword() {
         <Card className="mx-auto w-full max-w-[350px]">
           {form.formState.isSubmitSuccessful ? (
             <>
-              <CardHeader className={cn("text-2xl font-bold")}>
+              <CardHeader className={cn('text-2xl font-bold')}>
                 Email Sent
               </CardHeader>
-              <CardContent className={cn("space-y-3 text-slate-800")}>
+              <CardContent className={cn('space-y-3 text-slate-800')}>
                 <p>
                   We have sent you an email with a link to reset your password.
                 </p>

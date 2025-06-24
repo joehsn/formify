@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import Router from './Router.tsx';
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from '@/components/ui/sonner.tsx';
 import useUserStore from './lib/stores/user.store.ts';
 import { envVars, fetcher } from './lib/utils.ts';
 import useSWR from 'swr';
@@ -32,7 +32,7 @@ function App() {
   return (
     <>
       <Router />
-      <Toaster />
+      <Toaster position="top-center" />
     </>
   );
 }

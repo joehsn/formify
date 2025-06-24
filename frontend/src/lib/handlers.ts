@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { FormType } from '@/types';
 import { envVars } from './utils';
 import { z } from 'zod';
@@ -10,27 +10,18 @@ import { z } from 'zod';
  */
 export const handleLogOut = async (onLogout: () => void) => {
   try {
-    const response = await axios.post(
+    const req = await axios.post(
       `${envVars.VITE_API_URL}/users/logout`,
       null,
       {
         withCredentials: true,
       }
     );
-    toast({
-      title: 'Logged out',
-      description: response.data.message,
-      duration: 5000,
-    });
+    toast(req.data.message || "Logged out successfuly");
     onLogout();
   } catch (error) {
     console.error(error);
-    toast({
-      title: 'Error',
-      description: 'An error occurred while logging out',
-      duration: 5000,
-      variant: 'destructive',
-    });
+    toast('An error occurred while logging out');
   }
 };
 
@@ -38,19 +29,10 @@ export const handleCreateForm = async (callback: (formId: string) => void) => {
   try {
     const req = await axios.post(`${envVars.VITE_API_URL}/forms/`, null, { withCredentials: true });
     callback(req.data.formId)
-    toast({
-      title: 'Form created',
-      description: 'Your form has been created successfully',
-      duration: 5000,
-    });
+    toast('Form has been created successfully');
   } catch (error) {
     console.error("Error creating form:", error);
-    toast({
-      title: 'Error creating form',
-      description: 'An error occurred while creating the form',
-      duration: 5000,
-      variant: 'destructive',
-    });
+    toast('An error occurred while creating the form');
   }
 }
 
@@ -71,19 +53,10 @@ export const handleSaveForm = async (formId: string, form: FormType) => {
         withCredentials: true,
       }
     );
-    toast({
-      title: 'Form saved',
-      description: response.data.message,
-      duration: 5000,
-    });
+    toast(response.data.message);
   } catch (error) {
     console.error(error);
-    toast({
-      title: 'Error saving form',
-      description: 'An error occurred while saving the form',
-      duration: 5000,
-      variant: 'destructive',
-    });
+    toast('An error occurred while saving the form');
   }
 };
 
@@ -99,19 +72,10 @@ export const handleDeleteForm = async (formId: string) => {
         withCredentials: true,
       }
     );
-    toast({
-      title: 'Form deleted',
-      description: response.data.message,
-      duration: 5000,
-    });
+    toast(response.data.message);
   } catch (error) {
     console.error(error);
-    toast({
-      title: 'Error deleting form',
-      description: 'An error occurred while deleting the form',
-      duration: 5000,
-      variant: 'destructive',
-    });
+    toast('An error occurred while deleting the form');
   }
 };
 
@@ -135,19 +99,10 @@ export const handleUpdateForm = async (
         withCredentials: true,
       }
     );
-    toast({
-      title: 'Form updated',
-      description: response.data.message,
-      duration: 5000,
-    });
+    toast(response.data.message);
   } catch (error) {
     console.error(error);
-    toast({
-      title: 'Error updating form',
-      description: 'An error occurred while updating the form',
-      duration: 5000,
-      variant: 'destructive',
-    });
+    toast('An error occurred while updating the form');
   }
 };
 
@@ -172,18 +127,9 @@ export const handleSaveResponse = async (
         withCredentials: true,
       }
     );
-    toast({
-      title: 'Response saved',
-      description: response.data.message,
-      duration: 5000,
-    });
+    toast(response.data.message);
   } catch (error) {
     console.error(error);
-    toast({
-      title: 'Error saving response',
-      description: 'An error occurred while saving the response',
-      duration: 5000,
-      variant: 'destructive',
-    });
+    toast('An error occurred while saving the response');
   }
 };
