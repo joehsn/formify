@@ -64,7 +64,7 @@ export default function Login() {
             },
           });
         } else {
-          toast("An error occurred while logging in")
+          toast('An error occurred while logging in');
         }
       } else {
         console.error(error);
@@ -74,9 +74,9 @@ export default function Login() {
   };
 
   return (
-    <div className="py-24">
-      <div className="container flex flex-col items-center justify-center">
-        <Logo className="mb-8 block text-center text-4xl" />
+    <div className="relative flex min-h-dvh">
+      <div className="container flex flex-col items-center justify-center py-24 md:w-1/2">
+        <Logo className="mb-8 rounded-md border border-foreground bg-background text-center text-4xl" />
         {isAuthenticated ? (
           <Card className="mx-auto w-full max-w-[350px]">
             <CardHeader>
@@ -96,7 +96,7 @@ export default function Login() {
             </CardFooter>
           </Card>
         ) : (
-          <Card className="mx-auto w-full max-w-[350px]">
+          <Card className="mx-auto w-full max-w-md lg:border-none lg:shadow-none">
             <CardHeader>
               <h1 className="text-2xl font-semibold">Login to your account</h1>
               <div className="text-neutral-400">
@@ -182,11 +182,7 @@ export default function Login() {
                   </Button>
                 </CardContent>
                 <CardFooter className="flex-col items-start gap-y-4">
-                  <Button
-                    className="w-full"
-                    type="submit"
-                    disabled={form.formState.isSubmitting}
-                  >
+                  <Button type="submit" disabled={form.formState.isSubmitting}>
                     Login
                   </Button>
                 </CardFooter>
@@ -194,6 +190,15 @@ export default function Login() {
             </Form>
           </Card>
         )}
+      </div>
+      <div className="absolute inset-0 -z-10 flex h-full w-full items-center justify-center overflow-hidden lg:relative lg:w-1/2">
+        <img
+          src="/login.jpg"
+          loading="lazy"
+          width={4877}
+          height={7375}
+          className="block h-full max-h-dvh object-cover"
+        />
       </div>
     </div>
   );

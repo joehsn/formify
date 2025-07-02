@@ -10,7 +10,7 @@ import FAB from '@/components/FAB';
 import { ChevronUp as ChevronUpIcon } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
-function DisplayForm() {
+function PreviewForm() {
   const ref = useRef<HTMLButtonElement>(null);
   const { formId } = useParams();
   const { data, error, isLoading } = useSWR<FormType>(
@@ -50,14 +50,14 @@ function DisplayForm() {
         <Card className="z-10 border-t-8">
           <CardHeader>
             <div className="border-b py-2 text-2xl font-bold outline-none focus:border-neutral-900">
-              {data.title}
+              {data.formTitle}
             </div>
             <div className="border-b py-2 text-lg font-normal outline-none focus:border-neutral-900">
-              {data.description}
+              {data.formDesc}
             </div>
           </CardHeader>
         </Card>
-        <DisplayFields formId={formId} fields={data.fields} />
+        <DisplayFields formId={formId} fields={data.formFields} />
       </div>
       <FAB ref={ref} aria-label="Scroll to top">
         <ChevronUpIcon size={32} />
@@ -67,4 +67,4 @@ function DisplayForm() {
   );
 }
 
-export default DisplayForm;
+export default PreviewForm;

@@ -93,7 +93,7 @@ function Response({ formId, responseId }: ResponseProps) {
         <Card className="z-10 break-all border-t-8">
           <CardHeader>
             <div className="text-2xl font-bold text-slate-900">
-              {form.data?.title}
+              {form.data?.formTitle}
             </div>
             <div className="text-lg">
               A response by{' '}
@@ -116,7 +116,7 @@ function Response({ formId, responseId }: ResponseProps) {
           </CardHeader>
         </Card>
         <ResponseFields
-          fields={form.data?.fields ?? []}
+          fields={form.data?.formFields ?? []}
           answers={response.data?.answers ?? {}}
         />
       </div>
@@ -141,31 +141,31 @@ function ResponseFields({ fields, answers }: ResponseFieldsProps) {
           className={cn('break-all print:break-inside-avoid')}
         >
           <CardHeader>
-            <div className="text-lg font-bold">{field.label}</div>
+            <div className="text-lg font-bold">{field.fieldLabel}</div>
           </CardHeader>
           <CardContent>
-            {field.type === 'text' ||
-            field.type === 'email' ||
-            field.type === 'number' ? (
+            {field.fieldType === 'text' ||
+            field.fieldType === 'email' ||
+            field.fieldType === 'number' ? (
               <Input
-                type={field.type}
+                type={field.fieldType}
                 value={
                   (answers[field._id] as string) ? answers[field._id] : 'N/A'
                 }
                 disabled
               />
-            ) : field.type === 'radio' ? (
+            ) : field.fieldType === 'radio' ? (
               <RadioGroup defaultValue={answers[field._id] as string} disabled>
-                {field.options?.map((option, idx) => (
+                {field.fieldOptions?.map((option, idx) => (
                   <div key={idx} className="flex items-center space-x-2">
                     <RadioGroupItem value={option} id={option + idx} />
                     <Label htmlFor={option + idx}>{option}</Label>
                   </div>
                 ))}
               </RadioGroup>
-            ) : field.type === 'checkbox' ? (
+            ) : field.fieldType === 'checkbox' ? (
               <div className="grid gap-2">
-                {field.options?.map((option, idx) => (
+                {field.fieldOptions?.map((option, idx) => (
                   <div
                     key={option + idx}
                     className="flex items-center space-x-2"
@@ -182,7 +182,7 @@ function ResponseFields({ fields, answers }: ResponseFieldsProps) {
                   </div>
                 ))}
               </div>
-            ) : field.type === 'dropdown' ? (
+            ) : field.fieldType === 'dropdown' ? (
               <>
                 <Select value={answers[field._id] as string} disabled>
                   <SelectTrigger>
@@ -200,7 +200,7 @@ function ResponseFields({ fields, answers }: ResponseFieldsProps) {
                   )}
                 >
                   <CardContent className={cn('px-2 py-3')}>
-                    {field.options?.map((option, idx) => (
+                    {field.fieldOptions?.map((option, idx) => (
                       <div
                         key={idx}
                         className="flex items-center justify-between px-2 py-2 first-of-type:rounded-t-md last-of-type:rounded-b-md hover:bg-neutral-100"
@@ -214,7 +214,7 @@ function ResponseFields({ fields, answers }: ResponseFieldsProps) {
                   </CardContent>
                 </Card>
               </>
-            ) : field.type === 'date' ? (
+            ) : field.fieldType === 'date' ? (
               <Input type="text" value={answers[field._id]} disabled />
             ) : null}
           </CardContent>

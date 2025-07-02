@@ -46,7 +46,7 @@ function HomeAuthenticatedView() {
           Welcome back, {user?.fullname}
         </h1>
       </div>
-      <div className="container py-24">
+      <div className="container py-24 relative">
         <div className="mx-auto max-w-screen-md">
           {forms?.length !== 0 ? (
             <>
@@ -85,7 +85,7 @@ function HomeAuthenticatedView() {
                             variant="ghost"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate(`/form/${form._id}`);
+                              navigate(`/preview/${form._id}`);
                             }}
                           >
                             <EyeIcon size={32} />

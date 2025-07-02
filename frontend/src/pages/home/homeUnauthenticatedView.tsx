@@ -41,7 +41,7 @@ function HomeUnauthenticatedView() {
   ];
   return (
     <>
-      <section className="bg-neutral-50 py-20 text-center">
+      <section className="bg-neutral-50 py-32 text-center">
         <div className="container mx-auto px-6">
           <h2 className="text-4xl font-extrabold text-neutral-600">
             Simplify Form Creation and Management

@@ -58,10 +58,10 @@ function ForgotPassword() {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div className="py-24">
-      <div className="container flex flex-col items-center justify-center">
-        <Logo className="mb-8 block text-center text-4xl" />
-        <Card className="mx-auto w-full max-w-[350px]">
+    <div className="relative flex min-h-dvh">
+      <div className="container flex flex-col items-center justify-center py-24 md:w-1/2">
+        <Logo className="mb-8 rounded-md border border-foreground bg-background text-center text-4xl" />
+        <Card className="mx-auto w-full max-w-md lg:border-none lg:shadow-none">
           {form.formState.isSubmitSuccessful ? (
             <>
               <CardHeader className={cn('text-2xl font-bold')}>
@@ -113,7 +113,6 @@ function ForgotPassword() {
                   </CardContent>
                   <CardFooter className="flex-col items-start gap-y-4">
                     <Button
-                      className="w-full"
                       type="submit"
                       disabled={form.formState.isSubmitting}
                     >
@@ -125,6 +124,15 @@ function ForgotPassword() {
             </>
           )}
         </Card>
+      </div>
+      <div className="absolute inset-0 -z-10 flex h-full w-full items-center justify-center overflow-hidden lg:relative lg:w-1/2">
+        <img
+          src="/login.jpg"
+          loading="lazy"
+          width={4877}
+          height={7375}
+          className="block h-full max-h-dvh object-cover"
+        />
       </div>
     </div>
   );

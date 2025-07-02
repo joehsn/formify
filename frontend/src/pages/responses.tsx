@@ -56,10 +56,10 @@ function Responses({ formId }: ResponsesProps) {
       <Card className="z-10 border-t-8">
         <CardContent className={cn('p-6')}>
           <div className="border-b py-2 text-2xl font-bold outline-none focus:border-neutral-900">
-            {form.data?.title}
+            {form.data?.formTitle}
           </div>
           <div className="border-b py-2 text-lg font-normal outline-none focus:border-neutral-900">
-            {form.data?.description}
+            {form.data?.formDesc}
           </div>
 
           <div className="border-b py-2 text-lg font-normal outline-none focus:border-neutral-900">

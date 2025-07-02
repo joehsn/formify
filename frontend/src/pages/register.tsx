@@ -84,153 +84,157 @@ export default function Register() {
   };
 
   return (
-    <div className="h-full py-24">
-      <div className="container flex flex-col items-center justify-center">
+    <div className="relative flex min-h-dvh">
+      <div className="container flex flex-col items-center justify-center py-24 md:w-1/2">
+        <Logo className="mb-8 rounded-md border border-foreground bg-background text-center text-4xl" />
         {isAuthenticated ? (
-          <>
-            <Logo className="mb-8 block w-full text-center text-4xl" />
-            <Card className="mx-auto w-full max-w-[350px]">
-              <CardHeader>
-                <h1 className="text-2xl font-semibold">You are logged in</h1>
-              </CardHeader>
-              <CardContent>
-                <p className="text-neutral-500">
-                  You are already logged in. Do you want to logout?
-                </p>
-                <Button
-                  onClick={() => handleLogOut(onLogout)}
-                  className="mt-4 w-full"
-                >
-                  Logout
-                </Button>
-              </CardContent>
-            </Card>
-          </>
+          <Card className="mx-auto w-full max-w-[350px]">
+            <CardHeader>
+              <h1 className="text-2xl font-semibold">You are logged in</h1>
+            </CardHeader>
+            <CardContent>
+              <p className="text-neutral-500">
+                You are already logged in. Do you want to logout?
+              </p>
+              <Button
+                onClick={() => handleLogOut(onLogout)}
+                className="mt-4 w-full"
+              >
+                Logout
+              </Button>
+            </CardContent>
+          </Card>
         ) : (
-          <div>
-            <Logo className="mb-8 block w-full text-center text-4xl" />
-            <Card className="mx-auto w-full max-w-[350px]">
-              <CardHeader>
-                <h1 className="text-2xl font-semibold">
-                  Register for an account
-                </h1>
-                <div className="text-neutral-400">
-                  Have an account?{' '}
-                  <Link
-                    to="/login"
-                    className="text-indigo-600 hover:text-indigo-500 hover:underline"
+          <Card className="mx-auto w-full max-w-md lg:border-none lg:shadow-none">
+            <CardHeader>
+              <h1 className="text-2xl font-semibold">
+                Register for an account
+              </h1>
+              <div className="text-neutral-400">
+                Have an account?{' '}
+                <Link
+                  to="/login"
+                  className="text-indigo-600 hover:text-indigo-500 hover:underline"
+                >
+                  Login
+                </Link>
+              </div>
+            </CardHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <CardContent className="space-y-3">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Ex. John Doe"
+                            type="text"
+                            autoComplete="name"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Ex. john@doe.com"
+                            type="email"
+                            autoComplete="email"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              placeholder="Enter your password"
+                              type={isVisible ? 'text' : 'password'}
+                              autoComplete="new-password"
+                              {...field}
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              className="absolute right-0 top-1/2 -translate-y-1/2 transform"
+                              onClick={() => setIsVisible((prev) => !prev)}
+                              aria-label="Toggle password visibility"
+                            >
+                              {isVisible ? (
+                                <EyeOffIcon size={20} />
+                              ) : (
+                                <EyeIcon size={20} />
+                              )}
+                            </Button>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Confirm password</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              placeholder="Enter your password again"
+                              type={isVisible ? 'text' : 'password'}
+                              autoComplete="new-password"
+                              {...field}
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+                {/* NOTE: add a checkbox to confirm accepting police terms  */}
+                <CardFooter className="flex-col items-start gap-y-4">
+                  <Button
+                    type="submit"
+                    disabled={form.formState.isSubmitting}
                   >
-                    Login
-                  </Link>
-                </div>
-              </CardHeader>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
-                  <CardContent className="space-y-3">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Name</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Ex. John Doe"
-                              type="text"
-                              autoComplete="name"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Ex. john@doe.com"
-                              type="email"
-                              autoComplete="email"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Input
-                                placeholder="Enter your password"
-                                type={isVisible ? 'text' : 'password'}
-                                autoComplete="new-password"
-                                {...field}
-                              />
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                className="absolute right-0 top-1/2 -translate-y-1/2 transform"
-                                onClick={() => setIsVisible((prev) => !prev)}
-                                aria-label="Toggle password visibility"
-                              >
-                                {isVisible ? (
-                                  <EyeOffIcon size={20} />
-                                ) : (
-                                  <EyeIcon size={20} />
-                                )}
-                              </Button>
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="confirmPassword"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Confirm password</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Input
-                                placeholder="Enter your password again"
-                                type={isVisible ? 'text' : 'password'}
-                                autoComplete="new-password"
-                                {...field}
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </CardContent>
-                  <CardFooter className="flex-col items-start gap-y-4">
-                    <Button
-                      type="submit"
-                      className="w-full"
-                      disabled={form.formState.isSubmitting}
-                    >
-                      Register
-                    </Button>
-                  </CardFooter>
-                </form>
-              </Form>
-            </Card>
-          </div>
+                    Register
+                  </Button>
+                </CardFooter>
+              </form>
+            </Form>
+          </Card>
         )}
+      </div>
+      <div className="absolute inset-0 -z-10 flex h-full w-full object-cover items-center justify-center overflow-hidden lg:relative lg:w-1/2">
+        <img
+          src="/register.jpg"
+          loading="lazy"
+          width={4877}
+          height={7375}
+          className="block h-full max-h-dvh"
+        />
       </div>
     </div>
   );

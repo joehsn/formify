@@ -26,11 +26,9 @@ interface Actions {
   removeFieldOption: (_id: string, index: number) => void;
 }
 
-const initialForm = JSON.parse(localStorage.getItem('form') || 'null');
-
-const useUpdateFormStore = create<{ form: FormType } & Actions>()(
+const useUpdateFormStore = create<{ form: FormType | null } & Actions>()(
   immer((set) => ({
-    form: initialForm,
+    form: null,
     setForm: (form) => {
       set((state) => {
         state.form = form;
@@ -86,8 +84,8 @@ const useUpdateFormStore = create<{ form: FormType } & Actions>()(
         const index = state.form.formFields.findIndex((f) => f._id === _id);
         state.form.formFields[index].fieldType = type;
         if (['radio', 'checkbox', 'dropdown'].includes(type)) {
-          state.form.formFields[index].fieldOptions = state.form.formFields[index]
-            .fieldOptions || ['', ''];
+          const currentOptions = state.form.formFields[index].fieldOptions;
+          state.form.formFields[index].fieldOptions = currentOptions && currentOptions.length > 0 ? currentOptions : ['', ''];
         } else {
           state.form.formFields[index].fieldOptions = [];
         }

@@ -36,6 +36,7 @@ import { handleUpdateForm } from '@/lib/handlers';
 import FAB from '@/components/FAB';
 import Loader from '@/components/Loader';
 import Error from '@/components/Error';
+import EditableDiv from '@/components/EditableDiv';
 
 function FormPage() {
   const ref = useRef<HTMLButtonElement>(null);
@@ -49,12 +50,6 @@ function FormPage() {
     if (button) {
       button.addEventListener('click', handleScroll);
     }
-
-    return () => {
-      if (button) {
-        button.removeEventListener('click', handleScroll);
-      }
-    };
   }, []);
 
   const { formId } = useParams();
@@ -118,29 +113,17 @@ function UpdateForm({ formId }: { formId: string }) {
     <div className="relative mx-auto w-full max-w-screen-md space-y-6 px-4 py-8">
       <Card className="z-10 border-t-8">
         <CardHeader>
-          <input
-            type="text"
-            className="border-b py-2 text-2xl font-bold outline-none focus:border-neutral-900"
-            value={form.formTitle}
-            onChange={(e) => setFormTitle(e.target.value)}
-            onFocus={(e) => {
-              if (e.target.value === 'Untitled Form') {
-                setFormTitle('');
-              }
-            }}
-            onBlur={(e) => {
-              if (e.target.value === '') {
-                setFormTitle('Untitled Form');
-              }
-            }}
-            aria-label="Form title"
+          <EditableDiv
+            initialValue={form.formTitle}
+            onContentChange={setFormTitle}
+            className="text-2xl font-bold"
+            placeholder="Form Title"
           />
-          <textarea
-            className="h-40 resize-none border-b py-2 text-lg font-normal outline-none focus:border-neutral-900"
-            value={form.formDesc}
-            onChange={(e) => setFormDescription(e.target.value)}
+          <EditableDiv
+            initialValue={form.formDesc}
+            onContentChange={setFormDescription}
+            className="h-40 text-lg"
             placeholder="Form description"
-            aria-label="Form description"
           />
         </CardHeader>
         <CardFooter className={cn('space-x-4')}>
@@ -198,6 +181,7 @@ function Fields() {
   const removeFieldOption = useUpdateFormStore(
     (state) => state.removeFieldOption
   );
+
   const types = [
     'text',
     'email',
@@ -227,26 +211,15 @@ function Fields() {
           }
         >
           <CardHeader
-            className={cn('flex flex-row items-center justify-between gap-4')}
+            className={cn(
+              'flex flex-col-reverse items-center justify-between gap-4 sm:flex-row'
+            )}
           >
-            <input
-              type="text"
-              value={field.fieldLabel}
-              aria-label="Field label"
-              className="w-full border-b py-1 text-lg font-bold outline-none focus:border-neutral-900"
-              onChange={(e) => {
-                setFieldLabel(field._id, e.target.value);
-              }}
-              onFocus={(e) => {
-                if (e.target.value === 'Untitled Field') {
-                  setFieldLabel(field._id, '');
-                }
-              }}
-              onBlur={(e) => {
-                if (e.target.value === '') {
-                  setFieldLabel(field._id, 'Untitled Field');
-                }
-              }}
+            <EditableDiv
+              initialValue={field.fieldLabel}
+              onContentChange={(content) => setFieldLabel(field._id, content)}
+              className="w-full"
+              placeholder="Field label"
             />
             <Select
               defaultValue={field.fieldType}
@@ -254,7 +227,7 @@ function Fields() {
                 setFieldType(field._id, newType);
               }}
             >
-              <SelectTrigger className="w-[180px] capitalize">
+              <SelectTrigger className="w-full capitalize sm:w-[180px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -324,6 +297,7 @@ function Fields() {
                 onCheckedChange={(checked) => {
                   setFieldRequired(field._id, checked);
                 }}
+                disabled={form.formFields.length < 2}
               />
               <Label htmlFor={field._id + '-required-switch'}>Required</Label>
             </div>

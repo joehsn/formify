@@ -62,19 +62,13 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-raleway;
+    @apply bg-background font-raleway text-foreground;
   }
   input,
   textarea {
     @apply focus:placeholder-transparent;
   }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
+  .editable:not(:empty)::before {
+    @apply left-0 top-1 text-xs text-muted-foreground;
   }
 }
